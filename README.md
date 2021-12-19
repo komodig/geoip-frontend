@@ -1,7 +1,4 @@
-# optional: install Atom editor
-sudo add-apt-repository ppa:webupd8team/atom
-sudo apt update
-sudo apt install atom
+# Install from scratch
 
 # optional: enable vue syntax for vim
 clone https://github.com/posva/vim-vue
@@ -21,9 +18,9 @@ npm install -D pug-plain-loader pug
 
 # create and run frontend sandbox
 # if prompted: choose Vue 3!
-vue create -n rs-geoip 
+vue create -n geoip-frontend 
 
-cd rs-geoip/src
+cd geoip-frontend/src
 npm run serve
 
 # create dist/ directory for production:
