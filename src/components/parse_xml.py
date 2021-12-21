@@ -1,5 +1,6 @@
 import xml.dom.minidom as xml
-from countries import get_country_code
+from countries import country_codes
+
 
 class SvgPath:
     def __init__(self, d, id=None, name=None, classid=None):
@@ -13,14 +14,22 @@ class SvgPath:
             self.classid = self.name
 
         if self.code is None:
-            cc = get_country_code(self.classid)
+            cc = country_codes[self.classid]
             if cc is not None:
                 self.code = cc.upper()
             else:
                 print(f"{self.classid}: not found")
+        else:
+            try:
+                if self.code.upper() != country_codes[self.classid].upper():
+                        print(f'WARNING! {self.code.upper()} != {country_codes[self.classid].upper()} ({self.classid})')
+            except KeyError:
+                pass
+
 
 def class_count(classid, paths):
     return len([cls for cls in paths if cls.classid == classid])
+
 
 def write_svg_list(paths, ofile):
     with open(ofile, 'w') as of:
