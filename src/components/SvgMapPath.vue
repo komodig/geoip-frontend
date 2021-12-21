@@ -3,7 +3,7 @@ g.SvgMapPath
     path(
       :d="d",
       :id="id",
-      :classid="classid",
+      :class="class",
       v-on="$listeners",
       ref="path",
       :style="{fill: fill}"
@@ -15,7 +15,7 @@ export default {
   name: 'SvgMapPath',
   props: {
     id: String,
-    classid: String,
+    class: String,
     d: String,
   },
 };

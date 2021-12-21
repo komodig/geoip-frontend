@@ -11,7 +11,7 @@
     )
       g(:transform="`translate(${translateL}, ${translateT}) scale(${scale})`" ref="g")
         SvgMapPath(
-            v-for="path in continents",
+            v-for="path in nations",
             :key="path.id",
             v-bind="path",
         )
@@ -20,7 +20,7 @@
 <script>
 import SvgMapPath from './SvgMapPath';
 
-let svg_data = require('./continents.js');
+let svg_data = require('./world.js');
 
 export default {
   name: 'SvgMap',
@@ -33,8 +33,8 @@ export default {
       viewBoxH: 580,
       translateL: 100,
       translateT: 40,
-      scale: 1,
-      continents: svg_data.CONTINENTS,
+      scale: 0.3,
+      nations: svg_data.NATIONS,
     };
   },
 };

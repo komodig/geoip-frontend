@@ -22,6 +22,16 @@ class SvgPath:
 def class_count(classid, paths):
     return len([cls for cls in paths if cls.classid == classid])
 
+def write_svg_list(paths, ofile):
+    with open(ofile, 'w') as of:
+        of.write('export const NATIONS = [\n')
+        for svg in paths:
+            of.write('{')
+            of.write(f'id: "{svg.id}", class: "{svg.classid}", d: "{svg.d}"')
+            of.write('},\n')
+        of.write(']\n')
+
+
 if __name__ == '__main__':
     tree = xml.parse('world.xml')
     paths_xml = tree.getElementsByTagName('path')
@@ -46,3 +56,5 @@ if __name__ == '__main__':
 
     unique_ids = sorted(set([svg.id for svg in paths]))
     assert len(unique_ids) == len(paths)
+
+    write_svg_list(paths, 'world.js')
