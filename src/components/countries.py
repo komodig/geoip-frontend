@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 
 country_codes = {
     'Afghanistan': 'af',
