@@ -61,7 +61,7 @@ country_codes = [
     {'country': 'Cambodia', 'code': 'kh'},
     {'country': 'Cameroon', 'code': 'cm'},
     {'country': 'Canada', 'code': 'ca'},
-    {'country': 'Canary Islands (Spain)', 'code': 'es'},
+    {'country': 'Canary Islands (Spain)', 'code': 'ic'},
     {'country': 'Cape Verde', 'code': 'cv'},
     {'country': 'Cayman Islands', 'code': 'ky'},
     {'country': 'Central African Republic', 'code': 'cf'},

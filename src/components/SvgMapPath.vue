@@ -1,9 +1,8 @@
 <template lang="pug">
 g.SvgMapPath
     path(
-      :code="code",
       :d="d",
-      :name="name",
+      :id="id",
       :classid="classid",
       v-on="$listeners",
       ref="path",
@@ -15,8 +14,7 @@ g.SvgMapPath
 export default {
   name: 'SvgMapPath',
   props: {
-    code: String,
-    name: String,
+    id: String,
     classid: String,
     d: String,
   },
