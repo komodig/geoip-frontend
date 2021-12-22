@@ -4,28 +4,39 @@
 clone https://github.com/posva/vim-vue
 into ~/.vim
 
-# install nvm, node.js and vue
+# Install nvm, node.js and vue
+```
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.3/install.sh | bash
 nvm list-remote
 nvm install v16.13.1     # or latest node.js version
+```
 
-# install vue with npm(!)
+# Install vue with npm(!)
+```
 npm install -g @vue/cli --loglevel verbose
+```
 
-# if you want to use pug template lang
+# If you want to use pug template lang
+```
 npm install -g pug
 npm install -D pug-plain-loader pug
+```
 
-# either checkout your source-code from github!
-# OR: if you want to install from scratch
-# create project dir with vue:
-# (if prompted: choose Vue 3!)
+# Get or create Vue source code
+either checkout your source-code from github!
+OR: if you want to install from scratch
+create project dir with vue:
+(if prompted: choose Vue 3!)
+```
 vue create -n geoip-frontend
+```
 
+```
 cd geoip-frontend/src
 npm run serve
+```
 
-# create dist/ directory for production:
+# Create dist/ directory for production:
 
 ### Compiles and minifies for production
 ```
