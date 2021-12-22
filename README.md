@@ -1,4 +1,4 @@
-# Install from scratch
+# Install node.js and vue
 
 # optional: enable vue syntax for vim
 clone https://github.com/posva/vim-vue
@@ -10,15 +10,17 @@ nvm list-remote
 nvm install v16.13.1     # or latest node.js version
 
 # install vue with npm(!)
-npm install -g @vue/cli --loglevel verbose      
+npm install -g @vue/cli --loglevel verbose
 
 # if you want to use pug template lang
 npm install -g pug
 npm install -D pug-plain-loader pug
 
-# create and run frontend sandbox
-# if prompted: choose Vue 3!
-vue create -n geoip-frontend 
+# either checkout your source-code from github!
+# OR: if you want to install from scratch
+# create project dir with vue:
+# (if prompted: choose Vue 3!)
+vue create -n geoip-frontend
 
 cd geoip-frontend/src
 npm run serve
