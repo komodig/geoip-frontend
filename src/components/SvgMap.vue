@@ -15,6 +15,12 @@
             :key="path.id",
             v-bind="path",
         )
+
+      path.zoom(d="M 100 27 l 0 6")
+      path.zoom(d="M 97 30 l 6 0")
+      path.zoom(d="M 97 50 l 6 0")
+      circle.zoom(cx="100" cy="30" r="7" v-on:click="zoomin")
+      circle.zoom(cx="100" cy="50" r="7" v-on:click="zoomout")
 </template>
 
 <script>
@@ -37,5 +43,31 @@ export default {
       nations: svg_data.NATIONS,
     };
   },
+  methods: {
+    zoomin() {
+      this.scale += 0.1;
+      this.translateL -= 60;
+    },
+    zoomout() {
+      this.scale -= 0.1;
+      this.translateL += 60;
+    }
+  },
 };
 </script>
+
+<style>
+  circle.zoom {
+    stroke: black;
+    stroke-width: 1;
+    fill: grey;
+    fill-opacity: 0.3;
+  }
+  path.zoom {
+    stroke: black;
+    stroke-width: 1.5;
+  }
+  circle.zoom:hover {
+    stroke: white;
+  }
+</style>
