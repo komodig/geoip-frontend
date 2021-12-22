@@ -21,11 +21,13 @@ export default {
 };
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 .SvgMapPath {
-    fill: rgb(78,213,32);
+    fill: rgb(40,170,10);
     stroke: rgb(75, 45,115);
     stroke-width: 0.5;
+}
+.SvgMapPath:hover {
+    fill: rgb(60,230,60);
 }
 </style>
