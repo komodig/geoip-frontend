@@ -37,20 +37,20 @@ export default {
     return {
       viewBoxW: 1140,
       viewBoxH: 580,
-      translateL: 100,
+      translateL: -150,
       translateT: 40,
-      scale: 0.3,
+      scale: 0.7,
       nations: svg_data.NATIONS,
     };
   },
   methods: {
     zoomin() {
       this.scale += 0.1;
-      this.translateL -= 60;
+      this.translateL -= 80;
     },
     zoomout() {
       this.scale -= 0.1;
-      this.translateL += 60;
+      this.translateL += 80;
     }
   },
 };
