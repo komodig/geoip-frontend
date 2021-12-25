@@ -1,23 +1,23 @@
 <template lang="pug">
 g.SvgMapPath
     path(
-      :d="d",
-      :id="id",
-      :class="class",
-      v-on="$listeners",
-      ref="path",
-      :style="{fill: fill}"
+        :d="d",
+        :id="id",
+        :class="class",
+        v-on="$listeners",
+        ref="path",
+        :style="{fill: fill}"
     )
 </template>
 
 <script>
 export default {
-  name: 'SvgMapPath',
-  props: {
-    id: String,
-    class: String,
-    d: String,
-  },
+    name: 'SvgMapPath',
+    props: {
+        id: String,
+        class: String,
+        d: String,
+    },
 };
 </script>
 

@@ -26,67 +26,59 @@
 </template>
 
 <script>
-import SvgMapPath from './SvgMapPath';
+import SvgMapPath from "./SvgMapPath";
+import {classHighlight, classReset} from "./map.js"
 
 let svg_data = require('./world.js');
 
 export default {
-  name: 'SvgMap',
-  components: {
-    SvgMapPath,
-  },
-  data() {
-    return {
-      viewBoxW: 1140,
-      viewBoxH: 580,
-      translateL: -150,
-      translateT: 40,
-      scale: 0.7,
-      nations: svg_data.NATIONS,
-    };
-  },
-  methods: {
-    zoomin() {
-      this.scale += 0.1;
-      this.translateL -= 80;
+    name: 'SvgMap',
+    components: {
+        SvgMapPath,
     },
-    zoomout() {
-      this.scale -= 0.1;
-      this.translateL += 80;
+    data() {
+        return {
+            viewBoxW: 1140,
+            viewBoxH: 580,
+            translateL: -150,
+            translateT: 40,
+            scale: 0.7,
+            nations: svg_data.NATIONS,
+        };
     },
-    show(el) {
-      console.log(el.class)
-      var pArr = el.d.split(" ", 3);
-      console.log("x: " + pArr[1] + " y: " + pArr[2]);
-      var country = document.getElementsByClassName(el.class);
-      var x;
-      for(x = 0; country[x] != null; x += 1) {
-        country[x].style.fill = "rgb(60,230,60)";
-      }
+    methods: {
+        zoomin() {
+            this.scale += 0.1;
+            this.translateL -= 80;
+        },
+        zoomout() {
+            this.scale -= 0.1;
+            this.translateL += 80;
+        },
+        show(el) {
+            classHighlight(el.class);
+            var pArr = el.d.split(" ", 3);
+            console.log("x: " + pArr[1] + " y: " + pArr[2]);
+        },
+        reset(el) {
+            classReset(el.class);
+        },
     },
-    reset(el) {
-      var country = document.getElementsByClassName(el.class);
-      var x;
-      for(x = 0; country[x] != null; x += 1) {
-        country[x].style.fill = "rgb(40,170,10)";
-      }
-    },
-  },
 };
 </script>
 
 <style>
-  circle.zoom {
+circle.zoom {
     stroke: black;
     stroke-width: 1;
     fill: grey;
     fill-opacity: 0.3;
-  }
-  path.zoom {
+}
+path.zoom {
     stroke: black;
     stroke-width: 1.5;
-  }
-  circle.zoom:hover {
+}
+circle.zoom:hover {
     stroke: white;
-  }
+}
 </style>
