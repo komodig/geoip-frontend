@@ -3,17 +3,19 @@
     svg(
       xmlns="http://www.w3.org/2000/svg",
       xmlns:xlink="http://www.w3.org/1999/xlink",
-      version="1.1"
-      width="100%"
-      height="100%"
-      :viewBox="`0 0 ${viewBoxW} ${viewBoxH}`"
-      ref="svg"
+      version="1.1",
+      width="100%",
+      height="100%",
+      :viewBox="`0 0 ${viewBoxW} ${viewBoxH}`",
+      ref="svg",
     )
       g(:transform="`translate(${translateL}, ${translateT}) scale(${scale})`" ref="g")
         SvgMapPath(
             v-for="path in nations",
             :key="path.id",
             v-bind="path",
+            v-on:mouseenter="show(path)",
+            v-on:mouseleave="reset(path)",
         )
 
       path.zoom(d="M 100 27 l 0 6")
@@ -51,7 +53,24 @@ export default {
     zoomout() {
       this.scale -= 0.1;
       this.translateL += 80;
-    }
+    },
+    show(el) {
+      console.log(el.class)
+      var pArr = el.d.split(" ", 3);
+      console.log("x: " + pArr[1] + " y: " + pArr[2]);
+      var country = document.getElementsByClassName(el.class);
+      var x;
+      for(x = 0; country[x] != null; x += 1) {
+        country[x].style.fill = "rgb(60,230,60)";
+      }
+    },
+    reset(el) {
+      var country = document.getElementsByClassName(el.class);
+      var x;
+      for(x = 0; country[x] != null; x += 1) {
+        country[x].style.fill = "rgb(40,170,10)";
+      }
+    },
   },
 };
 </script>

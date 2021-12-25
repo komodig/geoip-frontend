@@ -27,7 +27,4 @@ export default {
     stroke: rgb(75, 45,115);
     stroke-width: 0.5;
 }
-.SvgMapPath:hover {
-    fill: rgb(60,230,60);
-}
 </style>
