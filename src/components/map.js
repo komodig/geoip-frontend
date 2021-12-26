@@ -35,8 +35,8 @@ export function classHighlight(name, transX, transY, fontSize) {
     for(i = 0; country[i] != null; i += 1) {
         country[i].style.fill = "rgb(60,230,60)";
     }
-    var x = (window.event.clientX + transX) * 0.5;
-    var y = (window.event.clientY + transY) * 0.5;
+    var x = (window.event.clientX + transX) * 0.4;
+    var y = (window.event.clientY + transY) * 0.4;
     var container = document.getElementById("world-map");
     container.appendChild(infoBoxLayout(x, y, name, fontSize));
     container.appendChild(infoTextLayout(x, y, name, fontSize));
