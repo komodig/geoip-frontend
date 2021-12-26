@@ -10,7 +10,7 @@
         ref="svg",
         id="world-map"
     )
-        g(:transform="`translate(${translateL}, ${translateT}) scale(${scale})`" ref="g")
+        g(:transform="`translate(${transX}, ${transY}) scale(${scale})`" ref="g")
             SvgMapPath(
                 v-for="path in nations",
                 :key="path.id",
@@ -41,8 +41,8 @@ export default {
         return {
             viewBoxW: 1140,
             viewBoxH: 580,
-            translateL: -150,
-            translateT: 40,
+            transX: -150,
+            transY: 40,
             scale: 0.7,
             nations: svg_data.NATIONS,
         };
@@ -50,14 +50,14 @@ export default {
     methods: {
         zoomin() {
             this.scale += 0.1;
-            this.translateL -= 80;
+            this.transX -= 80;
         },
         zoomout() {
             this.scale -= 0.1;
-            this.translateL += 80;
+            this.transX += 80;
         },
         show(el) {
-            classHighlight(el.class, el.d);
+            classHighlight(el.class, this.transX, this.transY, this.scale);
         },
         reset(el) {
             classReset(el.class);
