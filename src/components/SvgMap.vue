@@ -44,6 +44,7 @@ export default {
             transX: -150,
             transY: 40,
             scale: 0.7,
+            fontSize: 12,
             nations: svg_data.NATIONS,
         };
     },
@@ -57,7 +58,7 @@ export default {
             this.transX += 80;
         },
         show(el) {
-            classHighlight(el.class, this.transX, this.transY, this.scale);
+            classHighlight(el.class, this.transX, this.transY, this.fontSize);
         },
         reset(el) {
             classReset(el.class);
