@@ -6,7 +6,9 @@ git clone git://github.com/komodig/geoip-frontend.git
 ```
 
 ## optional: enable vue syntax for vim
+```
 clone https://github.com/posva/vim-vue
+```
 into ~/.vim
 
 ## Install nvm, node.js and vue
@@ -27,7 +29,7 @@ npm install -g pug
 npm install -D pug-plain-loader pug
 ```
 
-## optianal: install from scratch
+## optional: install from scratch
 if you don't want to checkout the git repo but
 create a new project dir with vue:
 (if prompted: choose Vue 3!)
@@ -35,12 +37,13 @@ create a new project dir with vue:
 vue create -n geoip-frontend
 ```
 
+## run development server
 ```
 cd geoip-frontend/src
 npm run serve
 ```
 
-# Create dist/ directory for production:
+## Create dist/ directory for production:
 
 ### Compiles and minifies for production
 ```
