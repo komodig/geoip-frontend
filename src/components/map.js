@@ -1,27 +1,29 @@
-function infoBoxLayout(x, y, name, fontSize) {
-    var infoBox = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-    infoBox.id = "nation-info";
-    infoBox.setAttribute("x", x);
-    infoBox.setAttribute("y", y);
-
+function boxLayout(x, y, name, fontSize) {
+    var box = document.createElementNS("http://www.w3.org/2000/svg", "rect");
     var width = 100;
-    if ((name.length + 2) * (fontSize/2) > width)
-        width = (name.length + 2) * (fontSize/2);
 
-    infoBox.setAttribute("width", width);
-    infoBox.setAttribute("height", fontSize*1.6);
-    infoBox.setAttribute("fill", "LightGrey");
-    infoBox.setAttribute("fill-opacity", 0.5);
-    infoBox.setAttribute("stroke-width", 3);
-    infoBox.setAttribute("stroke", "");
+    if ((name.length + 3) * (fontSize/2) > width)
+        width = (name.length + 3) * (fontSize/2);
 
-    return infoBox;
+    box.id = "nation-info";
+    box.setAttribute("x", x);
+    box.setAttribute("y", y);
+    box.setAttribute("width", width);
+    box.setAttribute("height", fontSize*1.6);
+    box.setAttribute("width", width);
+    box.setAttribute("height", fontSize*1.6);
+    box.setAttribute("fill", "LightGrey");
+    box.setAttribute("fill-opacity", 0.5);
+    box.setAttribute("stroke-width", 1);
+    box.setAttribute("stroke", "black");
+
+    return box;
 }
 
 function infoTextLayout(x, y, name, fontSize) {
     var text = document.createElementNS("http://www.w3.org/2000/svg", "text");
     text.id = "nation-text";
-    text.setAttribute("x", x);
+    text.setAttribute("x", x + fontSize/2);
     text.setAttribute("y", y + fontSize*1.2);
     text.setAttribute("font-size", fontSize);
     text.innerHTML = name;
@@ -38,7 +40,7 @@ export function classHighlight(name, transX, transY, fontSize) {
     var x = (window.event.clientX + transX) * 0.4;
     var y = (window.event.clientY + transY) * 0.4;
     var container = document.getElementById("world-map");
-    container.appendChild(infoBoxLayout(x, y, name, fontSize));
+    container.appendChild(boxLayout(x, y, name, fontSize));
     container.appendChild(infoTextLayout(x, y, name, fontSize));
 }
 
