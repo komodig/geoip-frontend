@@ -1,0 +1,13 @@
+circle.zoom {
+    stroke: black;
+    stroke-width: 1;
+    fill: grey;
+    fill-opacity: 0.3;
+}
+path.zoom {
+    stroke: black;
+    stroke-width: 1.5;
+}
+circle.zoom:hover {
+    stroke: white;
+}

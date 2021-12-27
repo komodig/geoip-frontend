@@ -8,7 +8,7 @@
         height="100%",
         :viewBox="`0 0 ${viewBoxW} ${viewBoxH}`",
         ref="svg",
-        id="world-map"
+        id="world-map",
     )
         g(:transform="`translate(${transX}, ${transY}) scale(${scale})`" ref="g")
             SvgMapPath(
@@ -67,18 +67,4 @@ export default {
 };
 </script>
 
-<style>
-circle.zoom {
-    stroke: black;
-    stroke-width: 1;
-    fill: grey;
-    fill-opacity: 0.3;
-}
-path.zoom {
-    stroke: black;
-    stroke-width: 1.5;
-}
-circle.zoom:hover {
-    stroke: white;
-}
-</style>
+<style src="./map.css"></style>
