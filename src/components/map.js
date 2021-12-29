@@ -8,7 +8,8 @@ function boxLayout(x, y, name, boxid, width, height, fontSize) {
 
     box.setAttribute("finalHeight", height);
 
-    box.id = boxid;
+    box.setAttribute("id", boxid);
+    box.setAttribute("class", "nation-context");
     box.setAttribute("x", x);
     box.setAttribute("y", y);
     box.setAttribute("width", 1);
@@ -23,11 +24,30 @@ function boxLayout(x, y, name, boxid, width, height, fontSize) {
 
 function infoTextLayout(x, y, name, fontSize) {
     let text = document.createElementNS("http://www.w3.org/2000/svg", "text");
-    text.id = "nation-text";
+    text.setAttribute("id", "nation-text");
+    text.setAttribute("class", "nation-context");
     text.setAttribute("x", x + fontSize/2);
     text.setAttribute("y", y + fontSize*1.2);
     text.setAttribute("font-size", fontSize);
     text.innerHTML = name;
+
+    return text;
+}
+
+function longTextLayout(x, y, textArr, fontSize) {
+    let text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+    text.setAttribute("id", "nation-long-text");
+    text.setAttribute("class", "nation-context");
+    text.setAttribute("x", x + fontSize/2);
+    text.setAttribute("y", y + fontSize*1.2);
+    for(let i=0; i < 23; i++) {
+        let row = document.createElementNS("http://www.w3.org/2000/svg", "tspan");
+        row.setAttribute("x", x + fontSize/2);
+        row.setAttribute("y", y + fontSize+fontSize*1.2*i);
+        row.setAttribute("font-size", fontSize);
+        row.innerHTML = textArr[i];
+        text.appendChild(row);
+    }
 
     return text;
 }
@@ -49,6 +69,7 @@ function growBox(action_callback) {
 }
 
 export function classHighlight(dim, name, transX, transY, fontSize) {
+    let ipdata = require('./hosts.js');
     let country = document.getElementsByClassName(name);
     let i;
     for(i = 0; country[i] != null; i += 1) {
@@ -82,7 +103,13 @@ export function classHighlight(dim, name, transX, transY, fontSize) {
         box.setAttribute('height', box.getAttribute('finalHeight') * progress);
     });
 
-    container.appendChild(infoTextLayout(x, y, name, fontSize));
+    const addText = () => {
+        container.appendChild(infoTextLayout(x, y, name, fontSize));
+        container.appendChild(longTextLayout(x, y + fontSize*2, ipdata.HOSTS, fontSize-2));
+    };
+    addText();
+    // a timeout would be nice but requires debouncing
+    //setTimeout(addText, 200);
 }
 
 export function classReset(name) {
@@ -92,7 +119,8 @@ export function classReset(name) {
         country[x].style.fill = "rgb(140,200,80)";
     }
     let container = document.getElementById("world-map");
-    container.removeChild(document.getElementById("nation-info"));
-    container.removeChild(document.getElementById("nation-text"));
-    container.removeChild(document.getElementById("nation-detail"));
+    let el = Array.from(document.getElementsByClassName("nation-context"));
+    el.forEach(v => {
+        container.removeChild(v);
+    });
 }
