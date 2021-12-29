@@ -52,7 +52,7 @@ export function classHighlight(dim, name, transX, transY, fontSize) {
     let country = document.getElementsByClassName(name);
     let i;
     for(i = 0; country[i] != null; i += 1) {
-        country[i].style.fill = "rgb(60,230,60)";
+        country[i].style.fill = "rgb(200,250,150)";
     }
     let x = (window.event.clientX + transX) * 0.4;
     let y = (window.event.clientY + transY) * 0.4;
@@ -89,7 +89,7 @@ export function classReset(name) {
     let country = document.getElementsByClassName(name);
     let x;
     for(x = 0; country[x] != null; x += 1) {
-        country[x].style.fill = "rgb(40,170,10)";
+        country[x].style.fill = "rgb(140,200,80)";
     }
     let container = document.getElementById("world-map");
     container.removeChild(document.getElementById("nation-info"));
