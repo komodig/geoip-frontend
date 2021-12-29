@@ -58,7 +58,7 @@ export default {
             this.transX += 80;
         },
         show(el) {
-            classHighlight(el.class, this.transX, this.transY, this.fontSize);
+            classHighlight(el.d, el.class, this.transX, this.transY, this.fontSize);
         },
         reset(el) {
             classReset(el.class);
