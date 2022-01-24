@@ -98,7 +98,7 @@ export function classHighlight(dim, name, transX, transY, fontSize) {
 
     ipdata.hostsByCountry(name).then(ipArr => {
         if(ipArr.length > 0)
-            container.appendChild(boxLayout(x, y + fontSize*2, name, "nation-detail", 100, 300, fontSize));
+            container.appendChild(boxLayout(x, y + fontSize*2, name, "nation-detail", 100, ipArr.length * fontSize*1.6, fontSize));
             growBox((progress) => {
                 let box = document.getElementById("nation-detail");
                 box.setAttribute('width', box.getAttribute('finalWidth') * progress);
