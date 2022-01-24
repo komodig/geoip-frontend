@@ -40,7 +40,7 @@ function longTextLayout(x, y, textArr, fontSize) {
     text.setAttribute("class", "nation-context");
     text.setAttribute("x", x + fontSize/2);
     text.setAttribute("y", y + fontSize*1.2);
-    for(let i=0; i < 23; i++) {
+    for(let i=0; i < textArr.length; i++) {
         let row = document.createElementNS("http://www.w3.org/2000/svg", "tspan");
         row.setAttribute("x", x + fontSize/2);
         row.setAttribute("y", y + fontSize+fontSize*1.2*i);
@@ -82,9 +82,8 @@ export function classHighlight(dim, name, transX, transY, fontSize) {
     console.log(name + " x: " + pArr[1] + " y: " + pArr[2]);
     console.log("mouse: " + x + " / " +y);
 
-    let container = document.getElementById("world-map");
+    var container = document.getElementById("world-map");
     container.appendChild(boxLayout(x, y, name, "nation-info", 100, fontSize*1.6, fontSize));
-    container.appendChild(boxLayout(x, y + fontSize*2, name, "nation-detail", 100, 300, fontSize));
 
     growBox((progress) => {
         let box = document.getElementById("nation-info");
@@ -94,20 +93,22 @@ export function classHighlight(dim, name, transX, transY, fontSize) {
         let box = document.getElementById("nation-info");
         box.setAttribute('height', box.getAttribute('finalHeight') * progress);
     });
-    growBox((progress) => {
-        let box = document.getElementById("nation-detail");
-        box.setAttribute('width', box.getAttribute('finalWidth') * progress);
-    });
-    growBox((progress) => {
-        let box = document.getElementById("nation-detail");
-        box.setAttribute('height', box.getAttribute('finalHeight') * progress);
-    });
 
-    const addText = () => {
-        container.appendChild(infoTextLayout(x, y, name, fontSize));
-        container.appendChild(longTextLayout(x, y + fontSize*2, ipdata.HOSTS, fontSize-2));
-    };
-    addText();
+    container.appendChild(infoTextLayout(x, y, name, fontSize));
+
+    ipdata.hostsByCountry(name).then(ipArr => {
+        if(ipArr.length > 0)
+            container.appendChild(boxLayout(x, y + fontSize*2, name, "nation-detail", 100, 300, fontSize));
+            growBox((progress) => {
+                let box = document.getElementById("nation-detail");
+                box.setAttribute('width', box.getAttribute('finalWidth') * progress);
+            });
+            growBox((progress) => {
+                let box = document.getElementById("nation-detail");
+                box.setAttribute('height', box.getAttribute('finalHeight') * progress);
+            });
+            container.appendChild(longTextLayout(x, y + fontSize*2, ipArr, fontSize-2));
+    });
     // a timeout would be nice but requires debouncing
     //setTimeout(addText, 200);
 }
