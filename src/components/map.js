@@ -17,7 +17,7 @@ function boxLayout(x, y, name, boxid, width, height, fontSize) {
     box.setAttribute("width", 1);
     box.setAttribute("height", 1);
     box.setAttribute("fill", "LightGrey");
-    box.setAttribute("fill-opacity", 0.5);
+    box.setAttribute("fill-opacity", 0.7);
     box.setAttribute("stroke-width", 1);
     box.setAttribute("stroke", "black");
 
@@ -55,6 +55,7 @@ function longTextLayout(x, y, textArr, fontSize, textId) {
 }
 
 function growBox(action_callback) {
+    /* animated box expanding */
     let startTime = 0;
     const totalTime = 200;
     // nested function
@@ -76,6 +77,7 @@ export function classHighlight(dim, name, transX, transY, fontSize) {
     for(i = 0; country[i] != null; i += 1) {
         country[i].style.fill = "rgb(200,250,150)";
     }
+    /* get mouse coordinates (slightly modificated) */
     let x = (window.event.clientX + transX) * 0.4;
     let y = (window.event.clientY + transY) * 0.4;
 
@@ -119,7 +121,7 @@ function createRetrieveHostInfo(container, name, x, y, fontSize) {
                 box.setAttribute('height', box.getAttribute('finalHeight') * progress);
             });
 
-            container.appendChild(longTextLayout(x, y + fontSize*2.5,["...", "IP addresses:"] , fontSize-2, statTextId));
+            container.appendChild(longTextLayout(x, y + fontSize*2.5,["...", "from IP addresses:"] , fontSize-2, statTextId));
             container.appendChild(longTextLayout(x, y + fontSize*5, ipArr, fontSize-2, "nation-long-text"));
 
             createRetrieveStatInfo(name, statTextId);
@@ -132,7 +134,7 @@ function createRetrieveStatInfo(name, statTextId) {
     ipdata.hostsTotalRateAPI(name).then(data => {
         if(data.country_hosts > 0) {
             let statText = document.getElementById(statTextId);
-            statText.firstChild.innerHTML = (data.country_hosts + " ("  + data.country_ratio + "%) of " + data.total_hosts);
+            statText.firstChild.innerHTML = (data.country_hosts + " of " + data.total_hosts + " ("  + data.country_ratio + "%)");
             console.log(data.country_hosts + " ("  + data.country_ratio + "%) of " + data.total_hosts);
         }
     })
@@ -141,7 +143,7 @@ function createRetrieveStatInfo(name, statTextId) {
 
 export function createTitle() {
     let container = document.getElementById("world-map");
-    container.appendChild(infoTextLayout(150, 100, 'tracking brute force cyber attacks', 52, "page-title"));
+    container.appendChild(infoTextLayout(170, 100, 'tracking brute force cyber attacks', 52, "page-title"));
 }
 
 export function classReset(name) {

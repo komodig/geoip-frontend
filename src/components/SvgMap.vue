@@ -9,7 +9,6 @@
         :viewBox="`0 0 ${viewBoxW} ${viewBoxH}`",
         ref="svg",
         id="world-map",
-        v-on:load="init()",
     )
         g(:transform="`translate(${transX}, ${transY}) scale(${scale})`" ref="g")
             SvgMapPath(

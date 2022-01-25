@@ -1,15 +1,19 @@
 <template>
-  <SvgMap />
+    <SvgMap />
 </template>
 
 <script>
 import SvgMap from './components/SvgMap.vue'
+import {createTitle} from "./components/map.js"
 
 export default {
-  name: 'App',
-  components: {
-    SvgMap
-  }
+    name: 'App',
+    components: {
+        SvgMap
+    },
+    mounted() {
+        createTitle();
+    },
 }
 </script>
 
