@@ -20,6 +20,6 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: black;
-  background: rgb(190, 200,240);
+  background: rgb(75, 75, 115);
 }
 </style>
