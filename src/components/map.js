@@ -141,7 +141,7 @@ function createRetrieveStatInfo(name, statTextId) {
 
 export function createTitle() {
     let container = document.getElementById("world-map");
-    container.appendChild(infoTextLayout(150, 100, 'source of brute force cyber attacks', 52, "page-title"));
+    container.appendChild(infoTextLayout(150, 100, 'tracking brute force cyber attacks', 52, "page-title"));
 }
 
 export function classReset(name) {
