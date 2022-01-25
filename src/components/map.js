@@ -34,9 +34,9 @@ function infoTextLayout(x, y, name, fontSize) {
     return text;
 }
 
-function longTextLayout(x, y, textArr, fontSize) {
+function longTextLayout(x, y, textArr, fontSize, textId) {
     let text = document.createElementNS("http://www.w3.org/2000/svg", "text");
-    text.setAttribute("id", "nation-long-text");
+    text.setAttribute("id", textId);
     text.setAttribute("class", "nation-context");
     text.setAttribute("x", x + fontSize/2);
     text.setAttribute("y", y + fontSize*1.2);
@@ -95,14 +95,11 @@ export function classHighlight(dim, name, transX, transY, fontSize) {
     });
 
     container.appendChild(infoTextLayout(x, y, name, fontSize));
-
-    ipdata.hostsTotalRateAPI(name).then(data => {
-        console.log("------------> " + data);
-    });
+    let statTextId = "nation-stat-text";
 
     ipdata.hostsByCountryAPI(name).then(ipArr => {
-        if(ipArr.length > 0)
-            container.appendChild(boxLayout(x, y + fontSize*2, name, "nation-detail", 100, ipArr.length * fontSize*1.6, fontSize));
+        if(ipArr.length > 0) {
+            container.appendChild(boxLayout(x, y + fontSize*2, name, "nation-detail", 100, (ipArr.length + 2) * fontSize*1.6, fontSize));
             growBox((progress) => {
                 let box = document.getElementById("nation-detail");
                 box.setAttribute('width', box.getAttribute('finalWidth') * progress);
@@ -111,9 +108,23 @@ export function classHighlight(dim, name, transX, transY, fontSize) {
                 let box = document.getElementById("nation-detail");
                 box.setAttribute('height', box.getAttribute('finalHeight') * progress);
             });
-            container.appendChild(longTextLayout(x, y + fontSize*2, ipArr, fontSize-2));
-    });
-    // a timeout would be nice but requires debouncing
+
+            container.appendChild(longTextLayout(x, y + fontSize*2,["...", "IP adresses:"] , fontSize-2, statTextId));
+            container.appendChild(longTextLayout(x, y + fontSize*4.5, ipArr, fontSize-2, "nation-long-text"));
+        }
+    })
+    .catch((err) => console.log(err));
+
+    ipdata.hostsTotalRateAPI(name).then(data => {
+        if(data.country_hosts > 0) {
+            let statText = document.getElementById(statTextId);
+            statText.firstChild.innerHTML = (data.country_hosts + " ("  + data.country_ratio + "%) of " + data.total_hosts);
+            console.log(data.country_hosts + " ("  + data.country_ratio + "%) of " + data.total_hosts);
+        }
+    })
+    .catch((err) => console.log(err));
+
+    // a timeout would be nice but requires throttling
     //setTimeout(addText, 200);
 }
 

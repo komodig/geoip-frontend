@@ -20,5 +20,5 @@ export async function hostsTotalRateAPI(country) {
     const response = await fetch(url);
     const data = await response.json();
 
-    return data.country_ratio + "% of " + data.total_hosts + " addrs";
+    return data;
 }
