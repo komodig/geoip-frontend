@@ -1,3 +1,5 @@
+let ipdata = require('./hosts.js');
+
 function boxLayout(x, y, name, boxid, width, height, fontSize) {
     let box = document.createElementNS("http://www.w3.org/2000/svg", "rect");
 
@@ -22,9 +24,9 @@ function boxLayout(x, y, name, boxid, width, height, fontSize) {
     return box;
 }
 
-function infoTextLayout(x, y, name, fontSize) {
+function infoTextLayout(x, y, name, fontSize, textId) {
     let text = document.createElementNS("http://www.w3.org/2000/svg", "text");
-    text.setAttribute("id", "nation-text");
+    text.setAttribute("id", textId);
     text.setAttribute("class", "nation-context");
     text.setAttribute("x", x + fontSize/2);
     text.setAttribute("y", y + fontSize*1.2);
@@ -69,7 +71,6 @@ function growBox(action_callback) {
 }
 
 export function classHighlight(dim, name, transX, transY, fontSize) {
-    let ipdata = require('./hosts.js');
     let country = document.getElementsByClassName(name);
     let i;
     for(i = 0; country[i] != null; i += 1) {
@@ -82,6 +83,11 @@ export function classHighlight(dim, name, transX, transY, fontSize) {
     console.log(name + " x: " + pArr[1] + " y: " + pArr[2]);
     console.log("mouse: " + x + " / " +y);
 
+    let container = createNameBox(name, x, y, fontSize);
+    createRetrieveHostInfo(container, name, x, y, fontSize);
+}
+
+function createNameBox(name, x, y, fontSize) {
     var container = document.getElementById("world-map");
     container.appendChild(boxLayout(x, y, name, "nation-info", 100, fontSize*1.6, fontSize));
 
@@ -93,8 +99,12 @@ export function classHighlight(dim, name, transX, transY, fontSize) {
         let box = document.getElementById("nation-info");
         box.setAttribute('height', box.getAttribute('finalHeight') * progress);
     });
+    container.appendChild(infoTextLayout(x, y, name, fontSize, "nation-text"));
 
-    container.appendChild(infoTextLayout(x, y, name, fontSize));
+    return container;
+}
+
+function createRetrieveHostInfo(container, name, x, y, fontSize) {
     let statTextId = "nation-stat-text";
 
     ipdata.hostsByCountryAPI(name).then(ipArr => {
@@ -109,12 +119,16 @@ export function classHighlight(dim, name, transX, transY, fontSize) {
                 box.setAttribute('height', box.getAttribute('finalHeight') * progress);
             });
 
-            container.appendChild(longTextLayout(x, y + fontSize*2,["...", "IP adresses:"] , fontSize-2, statTextId));
-            container.appendChild(longTextLayout(x, y + fontSize*4.5, ipArr, fontSize-2, "nation-long-text"));
+            container.appendChild(longTextLayout(x, y + fontSize*2.5,["...", "IP addresses:"] , fontSize-2, statTextId));
+            container.appendChild(longTextLayout(x, y + fontSize*5, ipArr, fontSize-2, "nation-long-text"));
+
+            createRetrieveStatInfo(name, statTextId);
         }
     })
     .catch((err) => console.log(err));
+}
 
+function createRetrieveStatInfo(name, statTextId) {
     ipdata.hostsTotalRateAPI(name).then(data => {
         if(data.country_hosts > 0) {
             let statText = document.getElementById(statTextId);
@@ -123,9 +137,11 @@ export function classHighlight(dim, name, transX, transY, fontSize) {
         }
     })
     .catch((err) => console.log(err));
+}
 
-    // a timeout would be nice but requires throttling
-    //setTimeout(addText, 200);
+export function createTitle() {
+    let container = document.getElementById("world-map");
+    container.appendChild(infoTextLayout(150, 100, 'source of brute force cyber attacks', 52, "page-title"));
 }
 
 export function classReset(name) {

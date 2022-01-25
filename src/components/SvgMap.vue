@@ -9,6 +9,7 @@
         :viewBox="`0 0 ${viewBoxW} ${viewBoxH}`",
         ref="svg",
         id="world-map",
+        v-on:load="init()",
     )
         g(:transform="`translate(${transX}, ${transY}) scale(${scale})`" ref="g")
             SvgMapPath(
@@ -28,7 +29,7 @@
 
 <script>
 import SvgMapPath from "./SvgMapPath";
-import {classHighlight, classReset} from "./map.js"
+import {classHighlight, classReset, createTitle} from "./map.js"
 
 let svg_data = require('./world.js');
 
@@ -63,6 +64,9 @@ export default {
         reset(el) {
             classReset(el.class);
         },
+        init() {
+            createTitle();
+        }
     },
 };
 </script>
