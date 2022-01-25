@@ -96,6 +96,10 @@ export function classHighlight(dim, name, transX, transY, fontSize) {
 
     container.appendChild(infoTextLayout(x, y, name, fontSize));
 
+    ipdata.hostsTotalRateAPI(name).then(data => {
+        console.log("------------> " + data);
+    });
+
     ipdata.hostsByCountryAPI(name).then(ipArr => {
         if(ipArr.length > 0)
             container.appendChild(boxLayout(x, y + fontSize*2, name, "nation-detail", 100, ipArr.length * fontSize*1.6, fontSize));
