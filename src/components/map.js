@@ -1,4 +1,5 @@
-let ipdata = require('./hosts.js');
+const ipdata = require('./hosts.js');
+const moment = require('moment');
 
 function boxLayout(x, y, name, boxid, width, height, fontSize) {
     let box = document.createElementNS("http://www.w3.org/2000/svg", "rect");
@@ -24,10 +25,10 @@ function boxLayout(x, y, name, boxid, width, height, fontSize) {
     return box;
 }
 
-function infoTextLayout(x, y, name, fontSize, textId) {
+function infoTextLayout(x, y, name, fontSize, textId, classId) {
     let text = document.createElementNS("http://www.w3.org/2000/svg", "text");
     text.setAttribute("id", textId);
-    text.setAttribute("class", "nation-context");
+    text.setAttribute("class", classId);
     text.setAttribute("x", x + fontSize/2);
     text.setAttribute("y", y + fontSize*1.2);
     text.setAttribute("font-size", fontSize);
@@ -101,7 +102,7 @@ function createNameBox(name, x, y, fontSize) {
         let box = document.getElementById("nation-info");
         box.setAttribute('height', box.getAttribute('finalHeight') * progress);
     });
-    container.appendChild(infoTextLayout(x, y, name, fontSize, "nation-text"));
+    container.appendChild(infoTextLayout(x, y, name, fontSize, "nation-text", "nation-context"));
 
     return container;
 }
@@ -143,7 +144,14 @@ function createRetrieveStatInfo(name, statTextId) {
 
 export function createTitle() {
     let container = document.getElementById("world-map");
-    container.appendChild(infoTextLayout(170, 100, 'tracking brute force cyber attacks', 52, "page-title"));
+    container.appendChild(infoTextLayout(170, 100, 'tracking brute force cyber attacks', 52, "page-title", "title"));
+
+    ipdata.timestampAPI(1).then(data => {
+        console.log(Date(data.timestamp));
+        let pretty_date = moment(data.timestamp).format('lll');
+        container.appendChild(infoTextLayout(700, 160, "updated: " + pretty_date, 16, "page-subtitle", "title"));
+    })
+    .catch((err) => console.log(err));
 }
 
 export function classReset(name) {

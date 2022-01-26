@@ -1,5 +1,7 @@
+const url_path = "https://your-domain/path/"
+
 export async function hostsByCountryAPI(country) {
-    const url = "https://your-domain/hosts/" + country + "/";
+    const url = url_path + "hosts/" + country + "/";
     const response = await fetch(url);
     const data = await response.json();
     let ipArr = [];
@@ -16,7 +18,15 @@ export async function hostsByCountryAPI(country) {
 }
 
 export async function hostsTotalRateAPI(country) {
-    const url = "https://your-domain/stat/" + country + "/";
+    const url = url_path + "hosts/stat/" + country + "/";
+    const response = await fetch(url);
+    const data = await response.json();
+
+    return data;
+}
+
+export async function timestampAPI(limit) {
+    const url = url_path + "times/" + limit + "/";
     const response = await fetch(url);
     const data = await response.json();
 

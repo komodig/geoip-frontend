@@ -29,6 +29,11 @@ npm install -g pug
 npm install -D pug-plain-loader pug
 ```
 
+## Misc dependencies...
+```
+npm install -g moment --save
+```
+
 ## optional: install from scratch
 if you don't want to checkout the git repo but
 create a new project dir with vue:
