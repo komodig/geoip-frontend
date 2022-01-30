@@ -28,7 +28,7 @@
 
 <script>
 import SvgMapPath from "./SvgMapPath";
-import {classHighlight, classReset, createTitle} from "./map.js"
+import {classHighlight, classReset} from "./map.js"
 
 let svg_data = require('./world.js');
 
@@ -63,9 +63,6 @@ export default {
         reset(el) {
             classReset(el.class);
         },
-        init() {
-            createTitle();
-        }
     },
 };
 </script>
