@@ -125,9 +125,8 @@ function createRetrieveHostInfo(container, name, x, y, fontSize) {
                 box.setAttribute('height', box.getAttribute('finalHeight') * progress);
             });
 
-            container.appendChild(longTextLayout(x, y + fontSize*2.5,["...", "from IP addresses:"] , fontSize-2, statTextId));
+            container.appendChild(longTextLayout(x, y + fontSize*2.5,["...", "from IP addresses:"], fontSize-2, statTextId));
             container.appendChild(longTextLayout(x, y + fontSize*5, ipArr, fontSize-2, "nation-long-text"));
-
             createRetrieveStatInfo(name, statTextId);
         }
     })
@@ -157,6 +156,27 @@ export function createTitle() {
     })
     .catch((err) => console.log(err));
 }
+
+export function createRetrieveHostDetail(addr, fontSize) {
+    let container = document.getElementById("world-map");
+
+    ipdata.hostByAddrAPI(addr).then(hostData => {
+        if(hostData.length > 0) {
+            container.appendChild(boxLayout(600, 160, addr, "host-detail", 150, 20 * fontSize*1.6, fontSize));
+            growBox((progress) => {
+                let box = document.getElementById("host-detail");
+                box.setAttribute('width', box.getAttribute('finalWidth') * progress);
+            });
+            growBox((progress) => {
+                let box = document.getElementById("host-detail");
+                box.setAttribute('height', box.getAttribute('finalHeight') * progress);
+            });
+            container.appendChild(longTextLayout(600, 160, [hostData[0]['ip'], hostData[0]['origin']], fontSize, "host-detail-text"));
+        }
+    })
+    .catch((err) => console.log(err));
+}
+
 
 const DOCKED_NAME = 'docked' // the docked-flag's name
 const NOTHING_DOCKED = ''

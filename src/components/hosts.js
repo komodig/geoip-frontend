@@ -32,3 +32,12 @@ export async function timestampAPI(limit) {
 
     return data;
 }
+
+export async function hostByAddrAPI(addr) {
+    const url = url_path + "hosts/addr/" + addr + "/";
+    const response = await fetch(url);
+    const data = await response.json();
+
+    return data;
+
+}
