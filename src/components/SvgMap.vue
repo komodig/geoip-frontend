@@ -41,7 +41,7 @@ export default {
     data() {
         return {
             viewBoxW: 1140,
-            viewBoxH: 580,
+            viewBoxH: 680,
             transX: -150,
             transY: 40,
             scale: 0.7,
