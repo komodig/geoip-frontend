@@ -147,8 +147,9 @@ export function createTitle() {
     container.appendChild(infoTextLayout(170, 100, 'tracking brute force cyber attacks', 52, "page-title", "title"));
 
     ipdata.timestampAPI(1).then(data => {
-        console.log(Date(data.timestamp));
-        let pretty_date = moment(data.timestamp).format('lll');
+        let end = data[0].timestamp.indexOf(".");
+        let dateStr = data[0].timestamp.slice(0,end);
+        let pretty_date = moment(Date.parse(dateStr)).format('lll');
         container.appendChild(infoTextLayout(700, 160, "updated: " + pretty_date, 16, "page-subtitle", "title"));
     })
     .catch((err) => console.log(err));
