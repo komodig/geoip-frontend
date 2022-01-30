@@ -74,8 +74,11 @@ function growBox(action_callback) {
 
 export function classHighlight(dim, name, transX, transY, fontSize) {
     let country = document.getElementsByClassName(name);
-    let i;
-    for(i = 0; country[i] != null; i += 1) {
+
+    if(anythingDocked())
+        return;
+
+    for(let i = 0; country[i] != null; i += 1) {
         country[i].style.fill = "rgb(200,250,150)";
     }
     /* get mouse coordinates (slightly modificated) */
@@ -155,10 +158,35 @@ export function createTitle() {
     .catch((err) => console.log(err));
 }
 
+const DOCKED_NAME = 'docked' // the docked-flag's name
+const NOTHING_DOCKED = ''
+
+export function classDockUndock(name) {
+    if(anythingDocked()) {
+        //do undock country class
+        let docked = sessionStorage.getItem(DOCKED_NAME)
+        sessionStorage.setItem(DOCKED_NAME, NOTHING_DOCKED);
+        classReset(docked);
+    } else {
+        // dock
+        sessionStorage.setItem(DOCKED_NAME, name);
+    }
+}
+
+function anythingDocked() {
+    if(sessionStorage.getItem(DOCKED_NAME) == NOTHING_DOCKED)
+        return false;
+    else
+        return true;
+}
+
 export function classReset(name) {
     let country = document.getElementsByClassName(name);
-    let x;
-    for(x = 0; country[x] != null; x += 1) {
+
+    if(anythingDocked())
+        return;
+
+    for(let x = 0; country[x] != null; x += 1) {
         country[x].style.fill = "rgb(140,200,80)";
     }
     let container = document.getElementById("world-map");
@@ -166,4 +194,9 @@ export function classReset(name) {
     el.forEach(v => {
         container.removeChild(v);
     });
+}
+
+export function initPage() {
+    sessionStorage.clear();
+    sessionStorage.setItem(DOCKED_NAME, NOTHING_DOCKED);
 }

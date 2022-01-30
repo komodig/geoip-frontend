@@ -17,6 +17,7 @@
                 v-bind="path",
                 v-on:mouseenter="show(path)",
                 v-on:mouseleave="reset(path)",
+                v-on:click="toggleFocused(path)",
             )
 
         path.zoom(d="M 100 27 l 0 6")
@@ -28,7 +29,7 @@
 
 <script>
 import SvgMapPath from "./SvgMapPath";
-import {classHighlight, classReset} from "./map.js"
+import {classHighlight, classReset, classDockUndock} from "./map.js"
 
 let svg_data = require('./world.js');
 
@@ -63,6 +64,9 @@ export default {
         reset(el) {
             classReset(el.class);
         },
+        toggleFocused(el) {
+            classDockUndock(el.class);
+        }
     },
 };
 </script>

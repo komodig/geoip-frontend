@@ -4,7 +4,7 @@
 
 <script>
 import SvgMap from './components/SvgMap.vue'
-import {createTitle} from "./components/map.js"
+import {createTitle, initPage} from "./components/map.js"
 
 export default {
     name: 'App',
@@ -12,6 +12,7 @@ export default {
         SvgMap
     },
     mounted() {
+        initPage();
         createTitle();
     },
 }
