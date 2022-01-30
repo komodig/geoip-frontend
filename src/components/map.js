@@ -48,6 +48,8 @@ function longTextLayout(x, y, textArr, fontSize, textId) {
         row.setAttribute("x", x + fontSize/2);
         row.setAttribute("y", y + fontSize+fontSize*1.2*i);
         row.setAttribute("font-size", fontSize);
+        row.setAttribute("onmouseenter", 'this.style.fontWeight="bolder"');
+        row.setAttribute("onmouseout", 'this.style.fontWeight="normal"');
         row.innerHTML = textArr[i];
         text.appendChild(row);
     }
