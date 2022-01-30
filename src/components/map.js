@@ -79,15 +79,15 @@ export function classHighlight(dim, name, transX, transY, fontSize) {
         country[i].style.fill = "rgb(200,250,150)";
     }
     /* get mouse coordinates (slightly modificated) */
-    let x = (window.event.clientX + transX) * 0.4;
-    let y = (window.event.clientY + transY) * 0.4;
+    let x = (window.event.clientX + transX) * 0.5;
+    let y = (window.event.clientY + transY) * 0.5;
 
     var pArr = dim.split(" ", 3);
     console.log(name + " x: " + pArr[1] + " y: " + pArr[2]);
     console.log("mouse: " + x + " / " +y);
 
     let container = createNameBox(name, x, y, fontSize);
-    createRetrieveHostInfo(container, name, x, y, fontSize);
+    createRetrieveHostInfo(container, name, 1000, 10, fontSize);
 }
 
 function createNameBox(name, x, y, fontSize) {
