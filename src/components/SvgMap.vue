@@ -25,18 +25,27 @@
         path.zoom(d="M 97 50 l 6 0")
         circle.zoom(cx="100" cy="30" r="7" v-on:click="zoomin")
         circle.zoom(cx="100" cy="50" r="7" v-on:click="zoomout")
+        text(id="host-container", display="none")
+            HostDetail(
+                v-for="tspan in hosts",
+                :key="tspan.id",
+                v-bind="tspan",
+            )
 </template>
 
 <script>
 import SvgMapPath from "./SvgMapPath";
-import {classHighlight, classReset, classDockUndock} from "./map.js"
+import HostDetail from "./HostDetail";
+import {classHighlight, classReset, classDockUndock, hostEntries} from "./map.js"
 
 let svg_data = require('./world.js');
+var detailedHosts = [];
 
 export default {
     name: 'SvgMap',
     components: {
         SvgMapPath,
+        HostDetail,
     },
     data() {
         return {
@@ -47,7 +56,12 @@ export default {
             scale: 0.7,
             fontSize: 12,
             nations: svg_data.NATIONS,
+            hosts: detailedHosts,
         };
+    },
+    setup(props) {
+        console.log(props);
+        detailedHosts = hostEntries(64);
     },
     methods: {
         zoomin() {

@@ -64,7 +64,11 @@ function growBox(action_callback) {
         if (!startTime) startTime = timestamp;
         // progress from 0 to 1 over totalTime
         const progress = (timestamp - startTime) / totalTime;
-        action_callback(progress);
+        try {
+            action_callback(progress);
+        } catch(err) {
+            void(0);
+        }
         if (progress < 1) {
             window.requestAnimationFrame(animateStep);
         }
@@ -219,4 +223,12 @@ export function classReset(name) {
 export function initPage() {
     sessionStorage.clear();
     sessionStorage.setItem(DOCKED_NAME, NOTHING_DOCKED);
+}
+
+export function hostEntries(range) {
+    let hosts = []
+    for(let x = 0; x < range; x++) {
+        hosts.push({"id": "host-" + String(x)});
+    }
+    return hosts;
 }

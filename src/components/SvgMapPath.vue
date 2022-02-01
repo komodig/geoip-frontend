@@ -4,9 +4,7 @@ g.SvgMapPath
         :d="d",
         :id="id",
         :class="class",
-        v-on="$listeners",
         ref="path",
-        :style="{fill: fill}"
     )
 </template>
 
