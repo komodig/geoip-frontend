@@ -1,11 +1,10 @@
 <template lang="pug">
-.HostDetail
-        tspan(
-            :id="id",
-            class="host-entry",
-            v-on:click="detailBox(entry)",
-            ref="tspan",
-        )
+tspan(
+    :id="id",
+    class="host-entry",
+    v-on:click="detailBox(entry)",
+    ref="tspan",
+)
 </template>
 
 <script>
@@ -26,9 +25,7 @@ export default {
 </script>
 
 <style scoped>
-.host-entry{
-    fill: rgb(140,200,80);
-    stroke: rgb(75, 45,115);
-    stroke-width: 0.5;
+.host-entry:hover {
+    color: white;
 }
 </style>

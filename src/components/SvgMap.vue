@@ -25,7 +25,7 @@
         path.zoom(d="M 97 50 l 6 0")
         circle.zoom(cx="100" cy="30" r="7" v-on:click="zoomin")
         circle.zoom(cx="100" cy="50" r="7" v-on:click="zoomout")
-        text(id="host-container", display="none")
+        text(id="host-container")
             HostDetail(
                 v-for="tspan in hosts",
                 :key="tspan.id",
@@ -36,7 +36,7 @@
 <script>
 import SvgMapPath from "./SvgMapPath";
 import HostDetail from "./HostDetail";
-import {classHighlight, classReset, classDockUndock, hostEntries} from "./map.js"
+import {classHighlight, classReset, classDockUndock, hostEntries, HOSTS_COUNT} from "./map.js"
 
 let svg_data = require('./world.js');
 var detailedHosts = [];
@@ -61,7 +61,7 @@ export default {
     },
     setup(props) {
         console.log(props);
-        detailedHosts = hostEntries(64);
+        detailedHosts = hostEntries(HOSTS_COUNT);
     },
     methods: {
         zoomin() {

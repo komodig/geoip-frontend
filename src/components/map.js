@@ -1,6 +1,8 @@
 const ipdata = require('./hosts.js');
 const moment = require('moment');
 
+export const HOSTS_COUNT = 64;
+
 function boxLayout(x, y, name, boxid, width, height, fontSize) {
     let box = document.createElementNS("http://www.w3.org/2000/svg", "rect");
 
@@ -50,6 +52,22 @@ function longTextLayout(x, y, textArr, fontSize, textId) {
         row.setAttribute("font-size", fontSize);
         row.innerHTML = textArr[i];
         text.appendChild(row);
+    }
+
+    return text;
+}
+
+function staticTextLayout(x, y, textArr, fontSize, textId) {
+    let text = document.getElementById(textId);
+    text.setAttribute("x", x + fontSize/2);
+    text.setAttribute("y", y + fontSize*1.2);
+    text.style.visibility = "visible";
+    let children = Array.from(text.children);
+    for(let i=0; i < children.length; i++) {
+        children[i].innerHTML = (textArr[i] ? textArr[i] : "");
+        children[i].setAttribute("font-size", fontSize);
+        children[i].setAttribute("x", x + fontSize/2);
+        children[i].setAttribute("dy", fontSize*1.1);
     }
 
     return text;
@@ -130,7 +148,7 @@ function createRetrieveHostInfo(container, name, x, y, fontSize) {
             });
 
             container.appendChild(longTextLayout(x, y + fontSize*2.5,["...", "from IP addresses:"], fontSize-2, statTextId));
-            container.appendChild(longTextLayout(x, y + fontSize*5, ipArr, fontSize-2, "nation-long-text"));
+            container.appendChild(staticTextLayout(x, y + fontSize*4, ipArr, fontSize-2, "host-container"));
             createRetrieveStatInfo(name, statTextId);
         }
     })
@@ -218,6 +236,8 @@ export function classReset(name) {
     el.forEach(v => {
         container.removeChild(v);
     });
+
+    document.getElementById("host-container").style.visibility = "hidden";
 }
 
 export function initPage() {
