@@ -86,9 +86,9 @@ export default {
         },
         detailBox(tspan) {
             // TODO: fix!
-            let addr = document.getElementById(tspan.id).innerText
-            console.log("createRetrieveHostDetail: " + addr);
-            createRetrieveHostDetail(addr, 12);
+            let addr = document.getElementById(tspan.id);
+            console.log("createRetrieveHostDetail: " + addr.innerHTML);
+            createRetrieveHostDetail(addr.innerHTML, 12);
         },
         enterTspan(tspan) {
             document.getElementById(tspan.id).setAttribute("text-decoration", "underline");

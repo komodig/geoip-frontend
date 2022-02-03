@@ -179,12 +179,20 @@ export function createTitle() {
     .catch((err) => console.log(err));
 }
 
+function removeId(eid) {
+    let elem = document.getElementById(eid);
+    if(elem)
+        return elem.parentNode.removeChild(elem);
+}
+
 export function createRetrieveHostDetail(addr, fontSize) {
     let container = document.getElementById("world-map");
 
+    removeId("host-detail-text");   // cleanup first
+
     ipdata.hostByAddrAPI(addr).then(hostData => {
         if(hostData.length > 0) {
-            container.appendChild(boxLayout(600, 160, addr, "host-detail", 150, 20 * fontSize*1.6, fontSize));
+            container.appendChild(boxLayout(800, 190, addr, "host-detail", 210, 20 * fontSize*1.6, fontSize));
             growBox((progress) => {
                 let box = document.getElementById("host-detail");
                 box.setAttribute('width', box.getAttribute('finalWidth') * progress);
@@ -193,7 +201,13 @@ export function createRetrieveHostDetail(addr, fontSize) {
                 let box = document.getElementById("host-detail");
                 box.setAttribute('height', box.getAttribute('finalHeight') * progress);
             });
-            container.appendChild(longTextLayout(600, 160, [hostData[0]['ip'], hostData[0]['origin']], fontSize, "host-detail-text"));
+
+            let dArr = [hostData[0]['ip'], hostData[0]['origin']];
+            for (const [key, value] of Object.entries(hostData[0]['geoip_detail'])) {
+                if(String(value).length > 0)
+                    dArr.push(key + " -> " + value);
+            }
+            container.appendChild(longTextLayout(800, 190, dArr, fontSize, "host-detail-text"));
         }
     })
     .catch((err) => console.log(err));
