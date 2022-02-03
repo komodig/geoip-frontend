@@ -30,13 +30,16 @@
                 v-for="tspan in hosts",
                 :key="tspan.id",
                 v-bind="tspan",
+                v-on:mouseenter="enterTspan(tspan)",
+                v-on:mouseleave="leaveTspan(tspan)",
+                v-on:click="detailBox(tspan)",
             )
 </template>
 
 <script>
 import SvgMapPath from "./SvgMapPath";
 import HostDetail from "./HostDetail";
-import {classHighlight, classReset, classDockUndock, hostEntries, HOSTS_COUNT} from "./map.js"
+import {classHighlight, classReset, classDockUndock, hostEntries, createRetrieveHostDetail, HOSTS_COUNT} from "./map.js"
 
 let svg_data = require('./world.js');
 var detailedHosts = [];
@@ -80,7 +83,19 @@ export default {
         },
         toggleFocused(el) {
             classDockUndock(el.class);
-        }
+        },
+        detailBox(tspan) {
+            // TODO: fix!
+            let addr = document.getElementById(tspan.id).innerText
+            console.log("createRetrieveHostDetail: " + addr);
+            createRetrieveHostDetail(addr, 12);
+        },
+        enterTspan(tspan) {
+            document.getElementById(tspan.id).setAttribute("text-decoration", "underline");
+        },
+        leaveTspan(tspan) {
+            document.getElementById(tspan.id).setAttribute("text-decoration", "none");
+        },
     },
 };
 </script>
