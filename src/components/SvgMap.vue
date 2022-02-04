@@ -34,6 +34,7 @@
                 v-on:mouseleave="leaveTspan(tspan)",
                 v-on:click="detailBox(tspan)",
             )
+        text(id="link-container")
             HostDetail(
                 v-for="tspan in links",
                 :key="tspan.id",

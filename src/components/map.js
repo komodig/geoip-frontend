@@ -194,7 +194,7 @@ export function createRetrieveHostDetail(addr, fontSize) {
                     dArr.push(key + " -> " + value);
             }
             container.appendChild(longTextLayout(800, 190, dArr, fontSize, "host-detail-text"));
-            container.appendChild(staticTextLayout(800, (220 + dArr.length * fontSize), ["get whois-detail", ], fontSize, "host-container"));
+            container.appendChild(staticTextLayout(800, (220 + dArr.length * fontSize), ["get whois-detail", ], fontSize, "link-container"));
         }
     })
     .catch((err) => console.log(err));
@@ -217,7 +217,7 @@ export function createRetrieveDetail(addr, fontSize, spanId) {
                 });
 
                 let dArr = [];
-                for (const [key, value] of Object.entries(hostData.whois)) {
+                for (const [key, value] of Object.entries(hostData.lines)) {
                     if(String(value).length > 0)
                         dArr.push(key + " -> " + value);
                 }
