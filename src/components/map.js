@@ -58,6 +58,10 @@ function longTextLayout(x, y, textArr, fontSize, textId) {
 }
 
 function staticTextLayout(x, y, textArr, fontSize, textId) {
+    /*
+     * re-use static text->tspan (or whatever) elements
+     * by filling-in content (i.e. innerHTML) from REST-API
+     */
     let text = document.getElementById(textId);
     text.setAttribute("x", x + fontSize/2);
     text.setAttribute("y", y + fontSize*1.2);

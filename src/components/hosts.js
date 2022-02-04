@@ -1,4 +1,4 @@
-const url_path = "https://your-domain/path/"
+const url_path = "https://reeknersprook.de:8080/rsapp/"
 
 export async function hostsByCountryAPI(country) {
     const url = url_path + "hosts/" + country + "/";

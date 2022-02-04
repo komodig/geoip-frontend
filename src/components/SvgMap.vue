@@ -85,10 +85,7 @@ export default {
             classDockUndock(el.class);
         },
         detailBox(tspan) {
-            // TODO: fix!
-            let addr = document.getElementById(tspan.id);
-            console.log("createRetrieveHostDetail: " + addr.innerHTML);
-            createRetrieveHostDetail(addr.innerHTML, 12);
+            createRetrieveHostDetail(document.getElementById(tspan.id).innerHTML, 12);
         },
         enterTspan(tspan) {
             document.getElementById(tspan.id).setAttribute("text-decoration", "underline");
