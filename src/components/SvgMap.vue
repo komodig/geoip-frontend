@@ -39,7 +39,7 @@
 <script>
 import SvgMapPath from "./SvgMapPath";
 import HostDetail from "./HostDetail";
-import {classHighlight, classReset, classDockUndock, hostEntries, createRetrieveHostDetail, HOSTS_COUNT} from "./map.js"
+import {classHighlight, classReset, classDockUndock, preInitHostEntries, createRetrieveHostDetail, HOSTS_COUNT} from "./map.js"
 
 let svg_data = require('./world.js');
 var detailedHosts = [];
@@ -64,8 +64,8 @@ export default {
     },
     setup(props) {
         console.log(props);
-        detailedHosts = hostEntries(HOSTS_COUNT);
-    },
+        detailedHosts = preInitHostEntries([], HOSTS_COUNT);
+        },
     methods: {
         zoomin() {
             this.scale += 0.1;

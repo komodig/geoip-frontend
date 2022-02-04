@@ -139,7 +139,7 @@ function createNameBox(name, x, y, fontSize) {
 function createRetrieveHostInfo(container, name, x, y, fontSize) {
     let statTextId = "nation-stat-text";
 
-    ipdata.hostsByCountryAPI(name).then(ipArr => {
+    ipdata.hostsByCountryAPI(name).then((ipArr) => {
         if(ipArr.length > 0) {
             container.appendChild(boxLayout(x, y + fontSize*2, name, "nation-detail", 100, (ipArr.length + 2) * fontSize*1.6, fontSize));
             growBox((progress) => {
@@ -170,25 +170,6 @@ function createRetrieveStatInfo(name, statTextId) {
     .catch((err) => console.log(err));
 }
 
-export function createTitle() {
-    let container = document.getElementById("world-map");
-    container.appendChild(infoTextLayout(170, 100, 'tracking brute force cyber attacks', 52, "page-title", "title"));
-
-    ipdata.timestampAPI(1).then(data => {
-        let end = data[0].timestamp.indexOf(".");
-        let dateStr = data[0].timestamp.slice(0,end);
-        let pretty_date = moment(Date.parse(dateStr)).format('lll');
-        container.appendChild(infoTextLayout(700, 160, "updated: " + pretty_date, 16, "page-subtitle", "title"));
-    })
-    .catch((err) => console.log(err));
-}
-
-function removeId(eid) {
-    let elem = document.getElementById(eid);
-    if(elem)
-        return elem.parentNode.removeChild(elem);
-}
-
 export function createRetrieveHostDetail(addr, fontSize) {
     let container = document.getElementById("world-map");
 
@@ -196,7 +177,7 @@ export function createRetrieveHostDetail(addr, fontSize) {
 
     ipdata.hostByAddrAPI(addr).then(hostData => {
         if(hostData.length > 0) {
-            container.appendChild(boxLayout(800, 190, addr, "host-detail", 210, 20 * fontSize*1.6, fontSize));
+            container.appendChild(boxLayout(800, 190, addr, "host-detail", 210, 20 * fontSize, fontSize));
             growBox((progress) => {
                 let box = document.getElementById("host-detail");
                 box.setAttribute('width', box.getAttribute('finalWidth') * progress);
@@ -217,6 +198,24 @@ export function createRetrieveHostDetail(addr, fontSize) {
     .catch((err) => console.log(err));
 }
 
+function removeId(eid) {
+    let elem = document.getElementById(eid);
+    if(elem)
+        return elem.parentNode.removeChild(elem);
+}
+
+export function createTitle() {
+    let container = document.getElementById("world-map");
+    container.appendChild(infoTextLayout(170, 100, 'tracking brute force cyber attacks', 52, "page-title", "title"));
+
+    ipdata.timestampAPI(1).then(data => {
+        let end = data[0].timestamp.indexOf(".");
+        let dateStr = data[0].timestamp.slice(0,end);
+        let pretty_date = moment(Date.parse(dateStr)).format('lll');
+        container.appendChild(infoTextLayout(700, 160, "updated: " + pretty_date, 16, "page-subtitle", "title"));
+    })
+    .catch((err) => console.log(err));
+}
 
 const DOCKED_NAME = 'docked' // the docked-flag's name
 const NOTHING_DOCKED = ''
@@ -263,10 +262,9 @@ export function initPage() {
     sessionStorage.setItem(DOCKED_NAME, NOTHING_DOCKED);
 }
 
-export function hostEntries(range) {
-    let hosts = []
+export function preInitHostEntries(list, range) {
     for(let x = 0; x < range; x++) {
-        hosts.push({"id": "host-" + String(x)});
+        list.push({"id": "host-" + String(x)});
     }
-    return hosts;
+    return list;
 }
