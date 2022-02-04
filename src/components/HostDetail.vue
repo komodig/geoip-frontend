@@ -17,8 +17,5 @@ export default {
 };
 </script>
 
-<style scoped>
-.host-entry:hover {
-    color: white;
-}
+<style>
 </style>

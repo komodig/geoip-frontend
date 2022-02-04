@@ -34,15 +34,33 @@
                 v-on:mouseleave="leaveTspan(tspan)",
                 v-on:click="detailBox(tspan)",
             )
+            HostDetail(
+                v-for="tspan in links",
+                :key="tspan.id",
+                v-bind="tspan",
+                v-on:mouseenter="enterTspan(tspan)",
+                v-on:mouseleave="leaveTspan(tspan)",
+                v-on:click="linkDetailBox(tspan)",
+            )
 </template>
 
 <script>
 import SvgMapPath from "./SvgMapPath";
 import HostDetail from "./HostDetail";
-import {classHighlight, classReset, classDockUndock, preInitHostEntries, createRetrieveHostDetail, HOSTS_COUNT} from "./map.js"
+import {classHighlight,
+    classReset,
+    classDockUndock,
+    preInitHostEntries,
+    createRetrieveHostDetail,
+    createRetrieveDetail,
+    WHOIS_ID,
+    NMAP_ID,
+    HOSTS_COUNT
+} from "./map.js"
 
 let svg_data = require('./world.js');
-var detailedHosts = [];
+let detailedHosts = [];
+let linkDetailAPIs =  [{"id": WHOIS_ID}, {"id": NMAP_ID}];
 
 export default {
     name: 'SvgMap',
@@ -60,11 +78,12 @@ export default {
             fontSize: 12,
             nations: svg_data.NATIONS,
             hosts: detailedHosts,
+            links: linkDetailAPIs,
         };
     },
     setup(props) {
         console.log(props);
-        detailedHosts = preInitHostEntries([], HOSTS_COUNT);
+        detailedHosts = preInitHostEntries([], HOSTS_COUNT, 'host');
         },
     methods: {
         zoomin() {
@@ -83,6 +102,9 @@ export default {
         },
         toggleFocused(el) {
             classDockUndock(el.class);
+        },
+        linkDetailBox(tspan) {
+            createRetrieveDetail(document.getElementById(tspan.id).innerHTML, 12, tspan.id);
         },
         detailBox(tspan) {
             createRetrieveHostDetail(document.getElementById(tspan.id).innerHTML, 12);

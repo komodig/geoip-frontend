@@ -2,6 +2,7 @@ const ipdata = require('./hosts.js');
 const moment = require('moment');
 
 export const HOSTS_COUNT = 64;
+export const WHOIS_ID = 'whois';
 
 function boxLayout(x, y, name, boxid, width, height, fontSize) {
     let box = document.createElementNS("http://www.w3.org/2000/svg", "rect");
@@ -193,9 +194,38 @@ export function createRetrieveHostDetail(addr, fontSize) {
                     dArr.push(key + " -> " + value);
             }
             container.appendChild(longTextLayout(800, 190, dArr, fontSize, "host-detail-text"));
+            container.appendChild(staticTextLayout(800, (220 + dArr.length * fontSize), ["get whois-detail", ], fontSize, "host-container"));
         }
     })
     .catch((err) => console.log(err));
+}
+
+export function createRetrieveDetail(addr, fontSize, spanId) {
+    let container = document.getElementById("world-map");
+
+    if(spanId == WHOIS_ID) {
+        ipdata.whoisAPI(addr).then(hostData => {
+            if(hostData.length > 0) {
+                container.appendChild(boxLayout(650, 190, addr, "whois-detail", 210, 20 * fontSize, fontSize));
+                growBox((progress) => {
+                    let box = document.getElementById("whois-detail");
+                    box.setAttribute('width', box.getAttribute('finalWidth') * progress);
+                });
+                growBox((progress) => {
+                    let box = document.getElementById("whois-detail");
+                    box.setAttribute('height', box.getAttribute('finalHeight') * progress);
+                });
+
+                let dArr = [];
+                for (const [key, value] of Object.entries(hostData.whois)) {
+                    if(String(value).length > 0)
+                        dArr.push(key + " -> " + value);
+                }
+                container.appendChild(longTextLayout(650, 190, dArr, fontSize, "whois-detail-text"));
+            }
+        })
+        .catch((err) => console.log(err));
+    }
 }
 
 function removeId(eid) {
@@ -262,9 +292,9 @@ export function initPage() {
     sessionStorage.setItem(DOCKED_NAME, NOTHING_DOCKED);
 }
 
-export function preInitHostEntries(list, range) {
+export function preInitHostEntries(list, range, idPrefix) {
     for(let x = 0; x < range; x++) {
-        list.push({"id": "host-" + String(x)});
+        list.push({"id": idPrefix + "-" + String(x)});
     }
     return list;
 }
