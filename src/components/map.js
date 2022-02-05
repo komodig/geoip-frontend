@@ -7,6 +7,7 @@ export const WHOIS_ID = 'whois';
 function boxLayout(x, y, name, boxid, width, height, fontSize) {
     let box = document.createElementNS("http://www.w3.org/2000/svg", "rect");
 
+    // adjust box width if it is too small for name
     if ((name.length + 3) * (fontSize/2) > width)
         box.setAttribute("finalWidth", (name.length + 3) * (fontSize/2));
     else
@@ -79,7 +80,6 @@ function staticTextLayout(x, y, textArr, fontSize, textId) {
 }
 
 function growBox(action_callback) {
-    /* animated box expanding */
     let startTime = 0;
     const totalTime = 200;
     // nested function
@@ -99,59 +99,36 @@ function growBox(action_callback) {
     window.requestAnimationFrame(animateStep);
 }
 
-export function classHighlight(dim, name, transX, transY, fontSize) {
-    let country = document.getElementsByClassName(name);
+function createAnimatedBox(x, y, name, boxId, width, height, fontSize) {
+    let container = document.getElementById("world-map");
 
-    if(anythingDocked())
-        return;
-
-    for(let i = 0; country[i] != null; i += 1) {
-        country[i].style.fill = "rgb(200,250,150)";
-    }
-    /* get mouse coordinates (slightly modificated) */
-    let x = (window.event.clientX + transX) * 0.5;
-    let y = (window.event.clientY + transY) * 0.5;
-
-    var pArr = dim.split(" ", 3);
-    console.log(name + " x: " + pArr[1] + " y: " + pArr[2]);
-    console.log("mouse: " + x + " / " +y);
-
-    let container = createNameBox(name, x, y, fontSize);
-    createRetrieveHostInfo(container, name, 1000, 10, fontSize);
-}
-
-function createNameBox(name, x, y, fontSize) {
-    var container = document.getElementById("world-map");
-    container.appendChild(boxLayout(x, y, name, "nation-info", 100, fontSize*1.6, fontSize));
+    container.appendChild(boxLayout(x, y, name, boxId, width, height, fontSize));
 
     growBox((progress) => {
-        let box = document.getElementById("nation-info");
+        let box = document.getElementById(boxId);
         box.setAttribute('width', box.getAttribute('finalWidth') * progress);
     });
     growBox((progress) => {
-        let box = document.getElementById("nation-info");
+        let box = document.getElementById(boxId);
         box.setAttribute('height', box.getAttribute('finalHeight') * progress);
     });
-    container.appendChild(infoTextLayout(x, y, name, fontSize, "nation-text", "nation-context"));
 
     return container;
 }
 
-function createRetrieveHostInfo(container, name, x, y, fontSize) {
+function createNameBox(name, x, y, fontSize) {
+    let container = createAnimatedBox(x, y, name, "nation-title-box", 100, fontSize*1.6, fontSize);
+    container.appendChild(infoTextLayout(x, y, name, fontSize, "nation-title", "nation-context"));
+
+    return container;
+}
+
+function createRetrieveHostList(name, x, y, fontSize) {
     let statTextId = "nation-stat-text";
 
     ipdata.hostsByCountryAPI(name).then((ipArr) => {
         if(ipArr.length > 0) {
-            container.appendChild(boxLayout(x, y + fontSize*2, name, "nation-detail", 100, (ipArr.length + 2) * fontSize*1.6, fontSize));
-            growBox((progress) => {
-                let box = document.getElementById("nation-detail");
-                box.setAttribute('width', box.getAttribute('finalWidth') * progress);
-            });
-            growBox((progress) => {
-                let box = document.getElementById("nation-detail");
-                box.setAttribute('height', box.getAttribute('finalHeight') * progress);
-            });
-
+            let container = createAnimatedBox(x, y+fontSize*2, name, "nation-hosts-box", 100, (ipArr.length+2)*fontSize*2, fontSize);
             container.appendChild(longTextLayout(x, y + fontSize*2.5,["...", "from IP addresses:"], fontSize-2, statTextId));
             container.appendChild(staticTextLayout(x, y + fontSize*4, ipArr, fontSize-2, "host-container"));
             createRetrieveStatInfo(name, statTextId);
@@ -172,56 +149,42 @@ function createRetrieveStatInfo(name, statTextId) {
 }
 
 export function createRetrieveHostDetail(addr, fontSize) {
-    let container = document.getElementById("world-map");
+    let x = 800;
+    let y = 190;
 
     removeId("host-detail-text");   // cleanup first
 
     ipdata.hostByAddrAPI(addr).then(hostData => {
         if(hostData.length > 0) {
-            container.appendChild(boxLayout(800, 190, addr, "host-detail", 210, 20 * fontSize, fontSize));
-            growBox((progress) => {
-                let box = document.getElementById("host-detail");
-                box.setAttribute('width', box.getAttribute('finalWidth') * progress);
-            });
-            growBox((progress) => {
-                let box = document.getElementById("host-detail");
-                box.setAttribute('height', box.getAttribute('finalHeight') * progress);
-            });
+            let container = createAnimatedBox(x, y, addr, "host-detail-box", 210, 20*fontSize, fontSize);
 
             let dArr = [hostData[0]['ip'], hostData[0]['origin']];
             for (const [key, value] of Object.entries(hostData[0]['geoip_detail'])) {
                 if(String(value).length > 0)
                     dArr.push(key + " -> " + value);
             }
-            container.appendChild(longTextLayout(800, 190, dArr, fontSize, "host-detail-text"));
-            container.appendChild(staticTextLayout(800, (220 + dArr.length * fontSize), ["get whois-detail", ], fontSize, "link-container"));
+            container.appendChild(longTextLayout(x, y, dArr, fontSize, "host-detail-text"));
+            container.appendChild(staticTextLayout(x, (y+20+dArr.length*fontSize), ["get whois-detail", ], fontSize, "link-container"));
         }
     })
     .catch((err) => console.log(err));
 }
 
-export function createRetrieveDetail(addr, fontSize, spanId) {
-    let container = document.getElementById("world-map");
+export function createRetrieveMoreDetail(addr, fontSize, spanId) {
+    let x = 650;
+    let y = 190;
 
     if(spanId == WHOIS_ID) {
         ipdata.whoisAPI(addr).then(hostData => {
             if(hostData.length > 0) {
-                container.appendChild(boxLayout(650, 190, addr, "whois-detail", 210, 20 * fontSize, fontSize));
-                growBox((progress) => {
-                    let box = document.getElementById("whois-detail");
-                    box.setAttribute('width', box.getAttribute('finalWidth') * progress);
-                });
-                growBox((progress) => {
-                    let box = document.getElementById("whois-detail");
-                    box.setAttribute('height', box.getAttribute('finalHeight') * progress);
-                });
+                let container = createAnimatedBox(x, y, addr, "whois-detail-box", 210, 20*fontSize, fontSize);
 
                 let dArr = [];
                 for (const [key, value] of Object.entries(hostData.lines)) {
                     if(String(value).length > 0)
                         dArr.push(key + " -> " + value);
                 }
-                container.appendChild(longTextLayout(650, 190, dArr, fontSize, "whois-detail-text"));
+                container.appendChild(longTextLayout(x, y, dArr, fontSize, "whois-detail-text"));
             }
         })
         .catch((err) => console.log(err));
@@ -267,6 +230,27 @@ function anythingDocked() {
         return false;
     else
         return true;
+}
+
+export function classHighlight(dim, name, transX, transY, fontSize) {
+    let country = document.getElementsByClassName(name);
+
+    if(anythingDocked())
+        return;
+
+    for(let i = 0; country[i] != null; i += 1) {
+        country[i].style.fill = "rgb(200,250,150)";
+    }
+    /* get mouse coordinates (slightly modificated) */
+    let x = (window.event.clientX + transX) * 0.5;
+    let y = (window.event.clientY + transY) * 0.5;
+
+    var pArr = dim.split(" ", 3);
+    console.log(name + " x: " + pArr[1] + " y: " + pArr[2]);
+    console.log("mouse: " + x + " / " +y);
+
+    createNameBox(name, x, y, fontSize);
+    createRetrieveHostList(name, 1000, 10, fontSize);
 }
 
 export function classReset(name) {

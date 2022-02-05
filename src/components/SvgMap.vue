@@ -53,7 +53,7 @@ import {classHighlight,
     classDockUndock,
     preInitHostEntries,
     createRetrieveHostDetail,
-    createRetrieveDetail,
+    createRetrieveMoreDetail,
     WHOIS_ID,
     NMAP_ID,
     HOSTS_COUNT
@@ -105,7 +105,7 @@ export default {
             classDockUndock(el.class);
         },
         linkDetailBox(tspan) {
-            createRetrieveDetail(document.getElementById(tspan.id).innerHTML, 12, tspan.id);
+            createRetrieveMoreDetail(document.getElementById(tspan.id).innerHTML, 12, tspan.id);
         },
         detailBox(tspan) {
             createRetrieveHostDetail(document.getElementById(tspan.id).innerHTML, 12);
