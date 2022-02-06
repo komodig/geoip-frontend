@@ -149,41 +149,39 @@ function createRetrieveStatInfo(name, statTextId) {
 }
 
 export function createRetrieveHostDetail(addr, fontSize) {
-    let x = 800;
+    let x = 700;
     let y = 190;
 
     removeId("host-detail-text");   // cleanup first
 
     ipdata.hostByAddrAPI(addr).then(hostData => {
         if(hostData.length > 0) {
-            let container = createAnimatedBox(x, y, addr, "host-detail-box", 210, 20*fontSize, fontSize);
+            let container = createAnimatedBox(x, y, addr, "host-detail-box", 300, 20*fontSize, fontSize);
 
-            let dArr = [hostData[0]['ip'], hostData[0]['origin']];
+            let dArr = [hostData[0]['origin']];
             for (const [key, value] of Object.entries(hostData[0]['geoip_detail'])) {
                 if(String(value).length > 0)
                     dArr.push(key + " -> " + value);
             }
             container.appendChild(longTextLayout(x, y, dArr, fontSize, "host-detail-text"));
-            container.appendChild(staticTextLayout(x, (y+20+dArr.length*fontSize), ["get whois-detail", ], fontSize, "link-container"));
+            if(hostData[0]['host_detail']) {
+                container.appendChild(staticTextLayout(x, (y+20+dArr.length*fontSize), ["show scan-detail: ", addr, ], fontSize, "link-container"));
+            }
         }
     })
     .catch((err) => console.log(err));
 }
 
 export function createRetrieveMoreDetail(addr, fontSize, spanId) {
-    let x = 650;
-    let y = 190;
+    let x = 400;
+    let y = 230;
 
     if(spanId == WHOIS_ID) {
-        ipdata.whoisAPI(addr).then(hostData => {
+        ipdata.hostByAddrAPI(addr).then(hostData => {
             if(hostData.length > 0) {
-                let container = createAnimatedBox(x, y, addr, "whois-detail-box", 210, 20*fontSize, fontSize);
+                let container = createAnimatedBox(x, y, addr, "whois-detail-box", 300, 20*fontSize, fontSize);
 
-                let dArr = [];
-                for (const [key, value] of Object.entries(hostData.lines)) {
-                    if(String(value).length > 0)
-                        dArr.push(key + " -> " + value);
-                }
+                let dArr = hostData[0]['host_detail']['nmap'].split("\n");
                 container.appendChild(longTextLayout(x, y, dArr, fontSize, "whois-detail-text"));
             }
         })
@@ -269,6 +267,7 @@ export function classReset(name) {
     });
 
     document.getElementById("host-container").style.visibility = "hidden";
+    document.getElementById("link-container").style.visibility = "hidden";
 }
 
 export function initPage() {

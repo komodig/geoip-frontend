@@ -61,7 +61,7 @@ import {classHighlight,
 
 let svg_data = require('./world.js');
 let detailedHosts = [];
-let linkDetailAPIs =  [{"id": WHOIS_ID}, {"id": NMAP_ID}];
+let linkDetailAPIs =  [{"id": 'none'}, {"id": WHOIS_ID}, {"id": NMAP_ID}];
 
 export default {
     name: 'SvgMap',
