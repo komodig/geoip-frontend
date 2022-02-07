@@ -54,14 +54,13 @@ import {classHighlight,
     preInitHostEntries,
     createRetrieveHostDetail,
     createRetrieveMoreDetail,
-    WHOIS_ID,
     NMAP_ID,
     HOSTS_COUNT
 } from "./map.js"
 
 let svg_data = require('./world.js');
 let detailedHosts = [];
-let linkDetailAPIs =  [{"id": 'none'}, {"id": WHOIS_ID}, {"id": NMAP_ID}];
+let linkDetailAPIs =  [{"id": NMAP_ID}];
 
 export default {
     name: 'SvgMap',
@@ -71,9 +70,9 @@ export default {
     },
     data() {
         return {
-            viewBoxW: 1140,
-            viewBoxH: 680,
-            transX: -150,
+            viewBoxW: 1150,
+            viewBoxH: 2000,
+            transX: -140,
             transY: 40,
             scale: 0.7,
             fontSize: 12,
@@ -105,7 +104,7 @@ export default {
             classDockUndock(el.class);
         },
         linkDetailBox(tspan) {
-            createRetrieveMoreDetail(document.getElementById(tspan.id).innerHTML, 12, tspan.id);
+            createRetrieveMoreDetail(document.getElementById(tspan.id).getAttribute("addr"), 12, tspan.id);
         },
         detailBox(tspan) {
             createRetrieveHostDetail(document.getElementById(tspan.id).innerHTML, 12);
