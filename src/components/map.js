@@ -4,6 +4,8 @@ const moment = require('moment');
 export const HOSTS_COUNT = 180;
 export const NMAP_ID = 'nmap';
 
+const CONTAINER_ID = "world-map"
+
 function boxLayout(x, y, name, boxid, width, height, fontSize) {
     let box = document.createElementNS("http://www.w3.org/2000/svg", "rect");
 
@@ -100,7 +102,7 @@ function growBox(action_callback) {
 }
 
 function createAnimatedBox(x, y, name, boxId, width, height, fontSize) {
-    let container = document.getElementById("world-map");
+    let container = document.getElementById(CONTAINER_ID);
 
     container.appendChild(boxLayout(x, y, name, boxId, width, height, fontSize));
 
@@ -142,7 +144,6 @@ function createRetrieveStatInfo(name, statTextId) {
         if(data.country_hosts > 0) {
             let statText = document.getElementById(statTextId);
             statText.firstChild.innerHTML = (data.country_hosts + " of " + data.total_hosts + " ("  + data.country_ratio + "%)");
-            console.log(data.country_hosts + " ("  + data.country_ratio + "%) of " + data.total_hosts);
         }
     })
     .catch((err) => console.log(err));
@@ -152,16 +153,11 @@ export function createRetrieveHostDetail(addr, fontSize) {
     let x = 700;
     let y = window.event.clientY * 0.5;
 
-    // cleanup first
-    removeId("host-detail-box");
-    removeId("host-detail-text");
-    removeId("nmap-detail-box");
-    removeId("nmap-detail-text");
-    document.getElementById("link-container").style.visibility = "hidden";
+    cleanupDetails();
 
     ipdata.hostByAddrAPI(addr).then(hostData => {
         if(hostData.length > 0) {
-            let container = createAnimatedBox(x, y, addr, "host-detail-box", 300, 18*fontSize, fontSize);
+            let container = createAnimatedBox(x, y, addr, "host-detail-box", 300, 19*fontSize, fontSize);
 
             let dArr = [addr, prettyDate(hostData[0]['timestamps'][0]['timestamp']), ""];
             for (const [key, value] of Object.entries(hostData[0]['geoip_detail'])) {
@@ -182,8 +178,10 @@ export function createRetrieveHostDetail(addr, fontSize) {
 
 export function createRetrieveMoreDetail(addr, fontSize, spanId) {
     const LINE_LENGTH = 85;
-    let x = 250;
+    let x = 230;
     let y = 20;
+
+    cleanupScanDetails();
 
     if(spanId == NMAP_ID) {
         ipdata.hostByAddrAPI(addr).then(hostData => {
@@ -192,7 +190,7 @@ export function createRetrieveMoreDetail(addr, fontSize, spanId) {
                 sArr[0] = sArr[0].replace("Starting ", "");  // remove confusing first word
                 let dArr = splitLineLength(sArr, LINE_LENGTH);
                 let height = dArr.length * fontSize * 1.2;
-                let container = createAnimatedBox(x, y, addr, "nmap-detail-box", 450, height, fontSize);
+                let container = createAnimatedBox(x, y, addr, "nmap-detail-box", LINE_LENGTH*(fontSize*0.6), height, fontSize);
                 container.appendChild(longTextLayout(x, y, dArr, fontSize, "nmap-detail-text"));
             }
         })
@@ -212,7 +210,6 @@ function splitLineLength(sArr, limit) {
                 }
                 else {
                     dArr.push(nstr);
-                    console.log("part: " + nstr);
                     nstr = "";
                 }
             });
@@ -232,6 +229,18 @@ function removeId(eid) {
         return elem.parentNode.removeChild(elem);
 }
 
+function cleanupScanDetails() {
+    removeId("nmap-detail-box");
+    removeId("nmap-detail-text");
+}
+
+function cleanupDetails() {
+    cleanupScanDetails();
+    removeId("host-detail-box");
+    removeId("host-detail-text");
+    document.getElementById("link-container").style.visibility = "hidden";
+}
+
 function prettyDate(timestamp) {
     let end = timestamp.indexOf(".");
     let dateStr = timestamp.slice(0,end);
@@ -239,7 +248,7 @@ function prettyDate(timestamp) {
 }
 
 export function createTitle() {
-    let container = document.getElementById("world-map");
+    let container = document.getElementById(CONTAINER_ID);
     container.appendChild(infoTextLayout(170, 100, 'tracking brute force cyber attacks', 52, "page-title", "title"));
 
     ipdata.timestampAPI(1).then(data => {
@@ -284,9 +293,9 @@ export function classHighlight(dim, name, transX, transY, fontSize) {
     let x = (window.event.clientX + transX) * 0.5;
     let y = (window.event.clientY + transY) * 0.5;
 
-    var pArr = dim.split(" ", 3);
-    console.log(name + " x: " + pArr[1] + " y: " + pArr[2]);
-    console.log("mouse: " + x + " / " +y);
+    //var pArr = dim.split(" ", 3);
+    //console.log(name + " x: " + pArr[1] + " y: " + pArr[2]);
+    //console.log("mouse: " + x + " / " +y);
 
     createNameBox(name, x, y, fontSize);
     createRetrieveHostList(name, 1000, 10, fontSize);
