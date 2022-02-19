@@ -20,11 +20,15 @@
                 v-on:click="toggleFocused(path)",
             )
 
-        path.zoom(d="M 100 27 l 0 6")
-        path.zoom(d="M 97 30 l 6 0")
-        path.zoom(d="M 97 50 l 6 0")
-        circle.zoom(cx="100" cy="30" r="7" v-on:click="zoomin")
-        circle.zoom(cx="100" cy="50" r="7" v-on:click="zoomout")
+        path.zoom(d="M 100 37 l 0 6")
+        path.zoom(d="M 97 40 l 6 0")
+        path.zoom(d="M 97 60 l 6 0")
+        circle.zoom(cx="100" cy="40" r="7" v-on:click="zoomIn")
+        circle.zoom(cx="100" cy="60" r="7" v-on:click="zoomOut")
+        polygon.move(points="120,42 140,50 120,58" v-on:click="moveLeft")
+        polygon.move(points="80,42 60,50 80,58" v-on:click="moveright")
+        polygon.move(points="90,25 110,25 100,10" v-on:click="moveUp")
+        polygon.move(points="90,75 110,75 100,90" v-on:click="moveDown")
         text(id="host-container")
             HostDetail(
                 v-for="tspan in hosts",
@@ -86,13 +90,25 @@ export default {
         detailedHosts = preInitHostEntries([], HOSTS_COUNT, 'host');
         },
     methods: {
-        zoomin() {
-            this.scale += 0.1;
-            this.transX -= 80;
+        zoomIn() {
+            this.scale += 0.2;
+            this.transX -= 100;
         },
-        zoomout() {
-            this.scale -= 0.1;
-            this.transX += 80;
+        zoomOut() {
+            this.scale -= 0.2;
+            this.transX += 100;
+        },
+        moveright() {
+            this.transX += 50;
+        },
+        moveLeft() {
+            this.transX -= 50;
+        },
+        moveDown() {
+            this.transY -= 50;
+        },
+        moveUp() {
+            this.transY += 50;
         },
         show(el) {
             classHighlight(el.d, el.class, this.transX, this.transY, this.fontSize);

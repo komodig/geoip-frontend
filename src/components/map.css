@@ -11,3 +11,12 @@ path.zoom {
 circle.zoom:hover {
     stroke: white;
 }
+polygon.move {
+    stroke: black;
+    stroke-width: 1.5;
+    fill: grey;
+    fill-opacity: 0.3;
+}
+polygon.move:hover {
+    stroke: white;
+}
