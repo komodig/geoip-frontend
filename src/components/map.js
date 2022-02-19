@@ -118,9 +118,16 @@ function createAnimatedBox(x, y, name, boxId, width, height, fontSize) {
     return container;
 }
 
+function middlePos(center, mouse) {
+    if(mouse > center)
+        return ((mouse - center) / 2) + center*0.7;
+    else
+        return ((center - mouse) / 2) + mouse*0.7;
+}
+
 function createNameBox(name, x, y, fontSize) {
-    let container = createAnimatedBox(x, y, name, "nation-title-box", 100, fontSize*1.6, fontSize);
-    container.appendChild(infoTextLayout(x, y, name, fontSize, "nation-title", "nation-context"));
+    let container = createAnimatedBox(middlePos(600, x), middlePos(300, y), name, "nation-title-box", 100, fontSize*1.6, fontSize);
+    container.appendChild(infoTextLayout(middlePos(600, x), middlePos(300, y), name, fontSize, "nation-title", "nation-context"));
 
     return container;
 }
