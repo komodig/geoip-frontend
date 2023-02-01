@@ -159,12 +159,13 @@ function createRetrieveStatInfo(name, statTextId) {
 export function createRetrieveHostDetail(addr, fontSize) {
     let x = 700;
     let y = window.event.clientY * 0.5;
+    let boxHeight = 24 * fontSize
 
     cleanupDetails();
 
     ipdata.hostByAddrAPI(addr).then(hostData => {
         if(hostData.length > 0) {
-            let container = createAnimatedBox(x, y, addr, "host-detail-box", 300, 19*fontSize, fontSize);
+            let container = createAnimatedBox(x, y, addr, "host-detail-box", 300, boxHeight, fontSize);
 
             let dArr = [addr, prettyDate(hostData[0]['timestamps'][0]['timestamp']), ""];
             for (const [key, value] of Object.entries(hostData[0]['geoip_detail'])) {

@@ -13,7 +13,7 @@ circle.zoom:hover {
 }
 polygon.move {
     stroke: black;
-    stroke-width: 1.5;
+    stroke-width: 1;
     fill: grey;
     fill-opacity: 0.3;
 }
