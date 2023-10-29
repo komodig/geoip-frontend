@@ -5,6 +5,12 @@
 git clone git://github.com/komodig/geoip-frontend.git
 ```
 
+## manually create file
+## and edit with your path (string) to backend url
+```
+cp hosts_config.js.example hosts_config.js
+```
+
 ## optional: enable vue syntax for vim
 ```
 clone https://github.com/posva/vim-vue
@@ -15,7 +21,7 @@ into ~/.vim
 ```
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.3/install.sh | bash
 nvm list-remote
-nvm install v16.13.1     # or latest node.js version
+nvm install v16.20.2     # or latest node.js version
 ```
 
 ## Install vue with npm
@@ -25,13 +31,15 @@ npm install -g @vue/cli --loglevel verbose
 
 ## If you want to use pug template lang...
 ```
-npm install -g pug
+npm install -g vue-pug-plugin
 npm install -D pug-plain-loader pug
+npm install -D vue-loader vue-template-compiler
 ```
 
 ## Misc dependencies...
 ```
-npm install -g moment --save
+npm install -g vue-moment --save
+npm install --global serve
 ```
 
 ## optional: install from scratch
@@ -43,8 +51,8 @@ vue create -n geoip-frontend
 ```
 
 ## run development server
+
 ```
-cd geoip-frontend/src
 npm run serve
 ```
 
