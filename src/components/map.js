@@ -143,7 +143,7 @@ function createRetrieveHostList(name, x, y, fontSize) {
                 ipArr[ip_lines-3] = " ";
                 ipArr[ip_lines-2] = "-- and more --";
             }
-            let container = createAnimatedBox(x, y+fontSize*2, name, "nation-hosts-box", 100, (ip_lines-5)*fontSize, fontSize);
+            let container = createAnimatedBox(x, y+fontSize*2, name, "nation-hosts-box", 95, (ip_lines-5)*fontSize, fontSize);
             container.appendChild(longTextLayout(x, y + fontSize*2.5,["", "", "from IP addresses:"], fontSize-2, statTextId));
             container.appendChild(staticTextLayout(x, y + fontSize*5, ipArr, fontSize-2, "host-container"));
             createRetrieveStatInfo(name, statTextId);
