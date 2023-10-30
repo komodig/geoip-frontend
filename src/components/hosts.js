@@ -1,4 +1,4 @@
-const url_path = require('./hosts_config.js').apiURL;
+const url_path = require('./hosts_config.js').apiURL();
 
 export async function hostsByCountryAPI(country) {
     const url = url_path + "hosts/" + country + "/";
