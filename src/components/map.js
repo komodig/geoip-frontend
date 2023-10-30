@@ -133,13 +133,19 @@ function createNameBox(name, x, y, fontSize) {
 }
 
 function createRetrieveHostList(name, x, y, fontSize) {
+    let ip_lines = 105;
     let statTextId = "nation-stat-text";
 
     ipdata.hostsByCountryAPI(name).then((ipArr) => {
         if(ipArr.length > 0) {
-            let container = createAnimatedBox(x, y+fontSize*2, name, "nation-hosts-box", 100, (ipArr.length+4)*fontSize, fontSize);
-            container.appendChild(longTextLayout(x, y + fontSize*2.5,["...", "from IP addresses:"], fontSize-2, statTextId));
-            container.appendChild(staticTextLayout(x, y + fontSize*4, ipArr, fontSize-2, "host-container"));
+            if(ipArr.length >= 105) {
+                ipArr = ipArr.slice(0,103);
+                ipArr[ip_lines-3] = " ";
+                ipArr[ip_lines-2] = "-- and more --";
+            }
+            let container = createAnimatedBox(x, y+fontSize*2, name, "nation-hosts-box", 100, (ip_lines-5)*fontSize, fontSize);
+            container.appendChild(longTextLayout(x, y + fontSize*2.5,["", "", "from IP addresses:"], fontSize-2, statTextId));
+            container.appendChild(staticTextLayout(x, y + fontSize*5, ipArr, fontSize-2, "host-container"));
             createRetrieveStatInfo(name, statTextId);
         }
     })
@@ -150,7 +156,8 @@ function createRetrieveStatInfo(name, statTextId) {
     ipdata.hostsTotalRateAPI(name).then(data => {
         if(data.country_hosts > 0) {
             let statText = document.getElementById(statTextId);
-            statText.firstChild.innerHTML = (data.country_hosts + " of " + data.total_hosts + " ("  + data.country_ratio + "%)");
+            statText.children[0].innerHTML = (data.country_hosts + " of " + data.total_hosts);
+            statText.children[1].innerHTML = ("("  + data.country_ratio + "%)");
         }
     })
     .catch((err) => console.log(err));
