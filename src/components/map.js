@@ -133,13 +133,13 @@ function createNameBox(name, x, y, fontSize) {
 }
 
 function createRetrieveHostList(name, x, y, fontSize) {
-    let ip_lines = 105;
+    let ip_lines = 100;
     let statTextId = "nation-stat-text";
 
     ipdata.hostsByCountryAPI(name).then((ipArr) => {
         if(ipArr.length > 0) {
-            if(ipArr.length >= 105) {
-                ipArr = ipArr.slice(0,103);
+            if(ipArr.length >= ip_lines) {
+                ipArr = ipArr.slice(0, ip_lines-2);
                 ipArr[ip_lines-3] = " ";
                 ipArr[ip_lines-2] = "-- and more --";
             }
@@ -266,8 +266,8 @@ export function createTitle() {
     let container = document.getElementById(CONTAINER_ID);
     container.appendChild(infoTextLayout(170, 100, 'tracking brute force cyber attacks', 52, "page-title", "title"));
 
-    ipdata.timestampAPI(1).then(data => {
-        let pretty_date = prettyDate(data[0].timestamp);
+    ipdata.timestampAPI().then(data => {
+        let pretty_date = prettyDate(data.timestamp);
         container.appendChild(infoTextLayout(700, 160, "updated: " + pretty_date, 16, "page-subtitle", "title"));
     })
     .catch((err) => console.log(err));

@@ -3,7 +3,8 @@ const url_path = require('./hosts_config.js').apiURL();
 export async function hostsByCountryAPI(country) {
     const url = url_path + "hosts/" + country + "/";
     const response = await fetch(url);
-    const data = await response.json();
+    let data = await response.json();
+    data = data['results'];
     let ipArr = [];
 
     data.forEach(obj => {
@@ -26,11 +27,12 @@ export async function hostsTotalRateAPI(country) {
 }
 
 export async function timestampAPI(limit) {
-    const url = url_path + "times/" + limit + "/";
+    const url = url_path + "times/";
     const response = await fetch(url);
     const data = await response.json();
 
-    return data;
+    // only return single (latest) timestamp
+    return data['results'][0];
 }
 
 export async function hostByAddrAPI(addr) {
@@ -38,6 +40,6 @@ export async function hostByAddrAPI(addr) {
     const response = await fetch(url);
     const data = await response.json();
 
-    return data;
+    return data['results'];
 
 }
