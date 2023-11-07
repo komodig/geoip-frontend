@@ -1,21 +1,25 @@
 const url_path = require('./hosts_config.js').apiURL();
 
 export async function hostsByCountryAPI(country) {
-    const url = url_path + "hosts/" + country + "/";
+    const url = url_path + "hosts/" + country + "/?page=1";
     const response = await fetch(url);
     let data = await response.json();
-    data = data['results'];
+    let ip_list = data['results'];
+    let count = data['count'];
+    let prev = data['previous'];
+    let next = data['next'];
     let ipArr = [];
+    console.log(`${prev} ---- ${count} ---- ${next}`);
 
-    data.forEach(obj => {
+    ip_list.forEach(obj => {
         Object.entries(obj).forEach(([key, value]) => {
             //console.log(`${key} ${value}`);
-            if(key == 'ip')
+            if(key == "ip")
                 ipArr.push(value);
         });
     });
 
-    return ipArr;
+    return {"ipArr": ipArr, "prev": prev, "count": count, "next": next}
 }
 
 export async function hostsTotalRateAPI(country) {

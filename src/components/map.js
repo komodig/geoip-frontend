@@ -1,10 +1,22 @@
 const ipdata = require('./hosts.js');
 const moment = require('moment');
 
-export const HOSTS_COUNT = 180;
+export const STATS_LINES = 4;
+export const HOSTS_COUNT = 100;
 export const NMAP_ID = 'nmap';
 
-const CONTAINER_ID = "world-map"
+// tag-ids + classes
+const CONTAINER_ID = "world-map";
+const STAT_CONTAINER = "stat-container";
+const HOST_CONTAINER = "host-container";
+const DETAIL_CONTAINER = "detail-container";
+const DETAIL_BOX = "host-detail-box";
+const DETAIL_TEXT = "host-detail-text";
+const NMAP_BOX = "nmap-detail-box"
+const NMAP_TEXT = "nmap-detail-text"
+
+const CONTEXT_CLASS = "nation-context";
+
 
 function boxLayout(x, y, name, boxid, width, height, fontSize) {
     let box = document.createElementNS("http://www.w3.org/2000/svg", "rect");
@@ -18,7 +30,7 @@ function boxLayout(x, y, name, boxid, width, height, fontSize) {
     box.setAttribute("finalHeight", height);
 
     box.setAttribute("id", boxid);
-    box.setAttribute("class", "nation-context");
+    box.setAttribute("class", CONTEXT_CLASS);
     box.setAttribute("x", x);
     box.setAttribute("y", y);
     box.setAttribute("width", 1);
@@ -43,10 +55,10 @@ function infoTextLayout(x, y, name, fontSize, textId, classId) {
     return text;
 }
 
-function longTextLayout(x, y, textArr, fontSize, textId) {
+function createTextLayout(x, y, textArr, fontSize, textId) {
     let text = document.createElementNS("http://www.w3.org/2000/svg", "text");
     text.setAttribute("id", textId);
-    text.setAttribute("class", "nation-context");
+    text.setAttribute("class", CONTEXT_CLASS);
     text.setAttribute("x", x + fontSize/2);
     text.setAttribute("y", y + fontSize*1.2);
     for(let i=0; i < textArr.length; i++) {
@@ -61,10 +73,11 @@ function longTextLayout(x, y, textArr, fontSize, textId) {
     return text;
 }
 
-function staticTextLayout(x, y, textArr, fontSize, textId) {
+function useTextLayout(x, y, textArr, fontSize, textId) {
     /*
      * re-use static text->tspan (or whatever) elements
      * by filling-in content (i.e. innerHTML) from REST-API
+     * useful for elements defined with events in SvgMap.vue
      */
     let text = document.getElementById(textId);
     text.setAttribute("x", x + fontSize/2);
@@ -127,40 +140,44 @@ function middlePos(center, mouse) {
 
 function createNameBox(name, x, y, fontSize) {
     let container = createAnimatedBox(middlePos(600, x), middlePos(300, y), name, "nation-title-box", 100, fontSize*1.6, fontSize);
-    container.appendChild(infoTextLayout(middlePos(600, x), middlePos(300, y), name, fontSize, "nation-title", "nation-context"));
+    container.appendChild(infoTextLayout(middlePos(600, x), middlePos(300, y), name, fontSize, "nation-title", CONTEXT_CLASS));
 
     return container;
 }
 
 function createRetrieveHostList(name, x, y, fontSize) {
     let ip_lines = 100;
-    let statTextId = "nation-stat-text";
 
-    ipdata.hostsByCountryAPI(name).then((ipArr) => {
+    ipdata.hostsByCountryAPI(name).then((ip_dict) => {
+        let ipArr = ip_dict['ipArr'];
         if(ipArr.length > 0) {
-            if(ipArr.length >= ip_lines) {
-                ipArr = ipArr.slice(0, ip_lines-2);
-                ipArr[ip_lines-3] = " ";
-                ipArr[ip_lines-2] = "-- and more --";
-            }
             let container = createAnimatedBox(x, y+fontSize*2, name, "nation-hosts-box", 90, (ip_lines-5)*fontSize, fontSize);
-            container.appendChild(longTextLayout(x, y + fontSize*2.5,["", "", "IP addresses:"], fontSize-2, statTextId));
-            container.appendChild(staticTextLayout(x, y + fontSize*5, ipArr, fontSize-2, "host-container"));
-            createRetrieveStatInfo(name, statTextId);
+            retrieveStatInfo(name, ip_dict).then((statArr) => {
+                container.appendChild(useTextLayout(x, y + fontSize*1.5, statArr, fontSize-2, STAT_CONTAINER));
+                container.appendChild(useTextLayout(x, y + fontSize*6, ipArr, fontSize-2, HOST_CONTAINER));
+            })
         }
     })
     .catch((err) => console.log(err));
 }
 
-function createRetrieveStatInfo(name, statTextId) {
-    ipdata.hostsTotalRateAPI(name).then(data => {
+async function retrieveStatInfo(name, ip_dict) {
+    let statArr = [];
+
+    await ipdata.hostsTotalRateAPI(name).then(data => {
         if(data.country_hosts > 0) {
-            let statText = document.getElementById(statTextId);
-            statText.children[0].innerHTML = (data.country_hosts + " of " + data.total_hosts);
-            statText.children[1].innerHTML = ("("  + data.country_ratio + "%)");
+            statArr.push(String(data.country_hosts) + " of " + String(data.total_hosts));
+            statArr.push("("  + String(data.country_ratio) + "%)");
+            statArr.push("IP addresses:");
+            statArr.push("[ - ] " + ip_dict["count"].toString() + " [ + ]");
         }
     })
     .catch((err) => console.log(err));
+
+    if(statArr.length != STATS_LINES)
+        console.log("Error: adjust STATS_LINES to stats content len: " + String(statArr.length));
+    else
+        return statArr;
 }
 
 export function createRetrieveHostDetail(addr, fontSize) {
@@ -172,18 +189,18 @@ export function createRetrieveHostDetail(addr, fontSize) {
 
     ipdata.hostByAddrAPI(addr).then(hostData => {
         if(hostData.length > 0) {
-            let container = createAnimatedBox(x, y, addr, "host-detail-box", 300, boxHeight, fontSize);
+            let container = createAnimatedBox(x, y, addr, DETAIL_BOX, 300, boxHeight, fontSize);
 
             let dArr = [addr, prettyDate(hostData[0]['timestamps'][0]['timestamp']), ""];
             for (const [key, value] of Object.entries(hostData[0]['geoip_detail'])) {
                 if(String(value).length > 0)
                     dArr.push(key + " : " + value);
             }
-            container.appendChild(longTextLayout(x, y, dArr, fontSize, "host-detail-text"));
+            container.appendChild(createTextLayout(x, y, dArr, fontSize, DETAIL_TEXT));
             if(hostData[0]['host_detail'] && hostData[0]['host_detail']['nmap'].length > 210) {
-                container.appendChild(staticTextLayout(x, (y+30+dArr.length*fontSize),
+                container.appendChild(useTextLayout(x, (y+30+dArr.length*fontSize),
                         ["[ open scan details (length "+ hostData[0]['host_detail']['nmap'].length +") ]",],
-                        fontSize, "link-container"));
+                        fontSize, DETAIL_CONTAINER));
                 document.getElementById(NMAP_ID).setAttribute("addr", addr);
             }
         }
@@ -205,8 +222,8 @@ export function createRetrieveMoreDetail(addr, fontSize, spanId) {
                 sArr[0] = sArr[0].replace("Starting ", "");  // remove confusing first word
                 let dArr = splitLineLength(sArr, LINE_LENGTH);
                 let height = dArr.length * fontSize * 1.2;
-                let container = createAnimatedBox(x, y, addr, "nmap-detail-box", LINE_LENGTH*(fontSize*0.6), height, fontSize);
-                container.appendChild(longTextLayout(x, y, dArr, fontSize, "nmap-detail-text"));
+                let container = createAnimatedBox(x, y, addr, NMAP_BOX, LINE_LENGTH*(fontSize*0.6), height, fontSize);
+                container.appendChild(createTextLayout(x, y, dArr, fontSize, NMAP_TEXT));
             }
         })
         .catch((err) => console.log(err));
@@ -245,15 +262,15 @@ function removeId(eid) {
 }
 
 function cleanupScanDetails() {
-    removeId("nmap-detail-box");
-    removeId("nmap-detail-text");
+    removeId(NMAP_BOX);
+    removeId(NMAP_TEXT);
 }
 
 function cleanupDetails() {
     cleanupScanDetails();
-    removeId("host-detail-box");
-    removeId("host-detail-text");
-    document.getElementById("link-container").style.visibility = "hidden";
+    removeId(DETAIL_BOX);
+    removeId(DETAIL_TEXT);
+    document.getElementById(DETAIL_CONTAINER).style.visibility = "hidden";
 }
 
 function prettyDate(timestamp) {
@@ -326,13 +343,14 @@ export function classReset(name) {
         country[x].style.fill = "rgb(140,200,80)";
     }
     let container = document.getElementById("world-map");
-    let el = Array.from(document.getElementsByClassName("nation-context"));
+    let el = Array.from(document.getElementsByClassName(CONTEXT_CLASS));
     el.forEach(v => {
         container.removeChild(v);
     });
 
-    document.getElementById("host-container").style.visibility = "hidden";
-    document.getElementById("link-container").style.visibility = "hidden";
+    document.getElementById(STAT_CONTAINER).style.visibility = "hidden";
+    document.getElementById(HOST_CONTAINER).style.visibility = "hidden";
+    document.getElementById(DETAIL_CONTAINER).style.visibility = "hidden";
 }
 
 export function initPage() {
@@ -340,9 +358,19 @@ export function initPage() {
     sessionStorage.setItem(DOCKED_NAME, NOTHING_DOCKED);
 }
 
-export function preInitHostEntries(list, range, idPrefix) {
-    for(let x = 0; x < range; x++) {
-        list.push({"id": idPrefix + "-" + String(x)});
+export function preInitHostEntries() {
+    let list = [];
+    for(let x = 0; x < HOSTS_COUNT; x++) {
+        list.push({"id": "host-" + String(x)});
     }
     return list;
 }
+
+export function preInitStatEntries() {
+    let list = [];
+    for(let x = 0; x < STATS_LINES; x++) {
+        list.push({"id": "stats-line-" + String(x)});
+    }
+    return list;
+}
+

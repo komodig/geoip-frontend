@@ -26,9 +26,16 @@
         circle.zoom(cx="100" cy="40" r="7" v-on:click="zoomIn")
         circle.zoom(cx="100" cy="60" r="7" v-on:click="zoomOut")
         polygon.move(points="120,42 140,50 120,58" v-on:click="moveLeft")
-        polygon.move(points="80,42 60,50 80,58" v-on:click="moveright")
+        polygon.move(points="80,42 60,50 80,58" v-on:click="moveRight")
         polygon.move(points="90,25 110,25 100,10" v-on:click="moveUp")
         polygon.move(points="90,75 110,75 100,90" v-on:click="moveDown")
+        text(id="stat-container")
+            HostDetail(
+                v-for="tspan in stats",
+                :key="tspan.id",
+                v-bind="tspan",
+                v-on:click="moveRight",
+            )
         text(id="host-container")
             HostDetail(
                 v-for="tspan in hosts",
@@ -38,14 +45,14 @@
                 v-on:mouseleave="leaveTspan(tspan)",
                 v-on:click="detailBox(tspan)",
             )
-        text(id="link-container")
+        text(id="detail-container")
             HostDetail(
-                v-for="tspan in links",
+                v-for="tspan in details",
                 :key="tspan.id",
                 v-bind="tspan",
                 v-on:mouseenter="enterTspan(tspan)",
                 v-on:mouseleave="leaveTspan(tspan)",
-                v-on:click="linkDetailBox(tspan)",
+                v-on:click="hostDetailBox(tspan)",
             )
 </template>
 
@@ -56,15 +63,16 @@ import {classHighlight,
     classReset,
     classDockUndock,
     preInitHostEntries,
+    preInitStatEntries,
     createRetrieveHostDetail,
     createRetrieveMoreDetail,
     NMAP_ID,
-    HOSTS_COUNT
 } from "./map.js"
 
 let svg_data = require('./world.js');
-let detailedHosts = [];
-let linkDetailAPIs =  [{"id": NMAP_ID}];
+let countryHosts = [];
+let countryStats = [];
+let hostDetailAPIs =  [{"id": NMAP_ID}];
 
 export default {
     name: 'SvgMap',
@@ -81,13 +89,15 @@ export default {
             scale: 0.7,
             fontSize: 12,
             nations: svg_data.NATIONS,
-            hosts: detailedHosts,
-            links: linkDetailAPIs,
+            hosts: countryHosts,
+            stats: countryStats,
+            details: hostDetailAPIs,
         };
     },
     setup(props) {
         console.log(props);
-        detailedHosts = preInitHostEntries([], HOSTS_COUNT, 'host');
+        countryHosts = preInitHostEntries();
+        countryStats = preInitStatEntries();
         },
     methods: {
         zoomIn() {
@@ -98,7 +108,7 @@ export default {
             this.scale -= 0.2;
             this.transX += 100;
         },
-        moveright() {
+        moveRight() {
             this.transX += 50;
         },
         moveLeft() {
@@ -119,7 +129,7 @@ export default {
         toggleFocused(el) {
             classDockUndock(el.class);
         },
-        linkDetailBox(tspan) {
+        hostDetailBox(tspan) {
             createRetrieveMoreDetail(document.getElementById(tspan.id).getAttribute("addr"), 12, tspan.id);
         },
         detailBox(tspan) {
