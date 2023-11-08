@@ -30,10 +30,10 @@
         polygon.move(points="90,25 110,25 100,10" v-on:click="moveUp")
         polygon.move(points="90,75 110,75 100,90" v-on:click="moveDown")
         text(id="stat-container")
-            HostDetail(
-                v-for="tspan in stats",
-                :key="tspan.id",
-                v-bind="tspan",
+            StatDetail(
+                v-for="hs in stats",
+                :key="hs.id",
+                v-bind="hs",
                 v-on:click="moveRight",
             )
         text(id="host-container")
@@ -59,6 +59,7 @@
 <script>
 import SvgMapPath from "./SvgMapPath";
 import HostDetail from "./HostDetail";
+import StatDetail from "./StatDetail";
 import {classHighlight,
     classReset,
     classDockUndock,
@@ -79,6 +80,7 @@ export default {
     components: {
         SvgMapPath,
         HostDetail,
+        StatDetail,
     },
     data() {
         return {
@@ -95,7 +97,6 @@ export default {
         };
     },
     setup(props) {
-        console.log(props);
         countryHosts = preInitHostEntries();
         countryStats = preInitStatEntries();
         },

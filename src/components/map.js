@@ -1,7 +1,7 @@
 const ipdata = require('./hosts.js');
 const moment = require('moment');
 
-export const STATS_LINES = 4;
+export const STATS_LINES = 6;
 export const HOSTS_COUNT = 100;
 export const NMAP_ID = 'nmap';
 
@@ -15,6 +15,7 @@ const DETAIL_TEXT = "host-detail-text";
 const NMAP_BOX = "nmap-detail-box"
 const NMAP_TEXT = "nmap-detail-text"
 
+//
 const CONTEXT_CLASS = "nation-context";
 
 
@@ -146,6 +147,10 @@ function createNameBox(name, x, y, fontSize) {
 }
 
 function createRetrieveHostList(name, x, y, fontSize) {
+    /*
+     * creates animated boxes for country info and retrieves host list and statistics to be assigned
+     * to vue data() in global element tables
+     */
     let ip_lines = 100;
 
     ipdata.hostsByCountryAPI(name).then((ip_dict) => {
@@ -169,7 +174,9 @@ async function retrieveStatInfo(name, ip_dict) {
             statArr.push(String(data.country_hosts) + " of " + String(data.total_hosts));
             statArr.push("("  + String(data.country_ratio) + "%)");
             statArr.push("IP addresses:");
-            statArr.push("[ - ] " + ip_dict["count"].toString() + " [ + ]");
+            statArr.push("[ - ] ");
+            statArr.push(ip_dict["count"].toString());
+            statArr.push(" [ + ]");
         }
     })
     .catch((err) => console.log(err));
@@ -334,6 +341,10 @@ export function classHighlight(dim, name, transX, transY, fontSize) {
 }
 
 export function classReset(name) {
+    /*
+     * remove animated box elements created by
+     * classHighlight()
+     */
     let country = document.getElementsByClassName(name);
 
     if(anythingDocked())
@@ -348,6 +359,10 @@ export function classReset(name) {
         container.removeChild(v);
     });
 
+    /*
+     * hide global elements containing Vue data() which are re-used by
+     * classHighlight()
+     */
     document.getElementById(STAT_CONTAINER).style.visibility = "hidden";
     document.getElementById(HOST_CONTAINER).style.visibility = "hidden";
     document.getElementById(DETAIL_CONTAINER).style.visibility = "hidden";
@@ -369,7 +384,7 @@ export function preInitHostEntries() {
 export function preInitStatEntries() {
     let list = [];
     for(let x = 0; x < STATS_LINES; x++) {
-        list.push({"id": "stats-line-" + String(x)});
+        list.push({"id": "stats-line-" + String(x), "class": (x <= 2 ? "none" : "stat-entry")});
     }
     return list;
 }
