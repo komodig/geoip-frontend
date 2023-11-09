@@ -34,7 +34,22 @@
                 v-for="hs in stats",
                 :key="hs.id",
                 v-bind="hs",
-                v-on:click="moveRight",
+            )
+        svg(
+            xmlns="http://www.w3.org/2000/svg",
+            xmlns:xlink="http://www.w3.org/1999/xlink",
+            version="1.1",
+            width="100%",
+            height="100%",
+            :viewBox="`0 0 ${viewBoxW} ${viewBoxH}`",
+            ref="svg",
+            id="nav-container",
+        )
+            Pagination(
+                v-for="polyg in pagenav",
+                :key="polyg.id",
+                v-bind="polyg",
+                v-on:click="pagemove(polyg.dir)",
             )
         text(id="host-container")
             HostDetail(
@@ -60,11 +75,13 @@
 import SvgMapPath from "./SvgMapPath";
 import HostDetail from "./HostDetail";
 import StatDetail from "./StatDetail";
+import Pagination from "./Pagination";
 import {classHighlight,
     classReset,
     classDockUndock,
     preInitHostEntries,
     preInitStatEntries,
+    preInitPaginEntries,
     createRetrieveHostDetail,
     createRetrieveMoreDetail,
     NMAP_ID,
@@ -73,6 +90,7 @@ import {classHighlight,
 let svg_data = require('./world.js');
 let countryHosts = [];
 let countryStats = [];
+let pagination = [];
 let hostDetailAPIs =  [{"id": NMAP_ID}];
 
 export default {
@@ -81,6 +99,7 @@ export default {
         SvgMapPath,
         HostDetail,
         StatDetail,
+        Pagination,
     },
     data() {
         return {
@@ -93,12 +112,14 @@ export default {
             nations: svg_data.NATIONS,
             hosts: countryHosts,
             stats: countryStats,
+            pagenav: pagination,
             details: hostDetailAPIs,
         };
     },
     setup(props) {
         countryHosts = preInitHostEntries();
         countryStats = preInitStatEntries();
+        pagination = preInitPaginEntries();
         },
     methods: {
         zoomIn() {
@@ -142,6 +163,16 @@ export default {
         leaveTspan(tspan) {
             document.getElementById(tspan.id).setAttribute("text-decoration", "none");
         },
+        pagemove(dir) {
+            if(dir == "left")
+                console.log(dir);
+            else if(dir == "right")
+                console.log(dir);
+            else if(dir == "in")
+                console.log(dir);
+            else
+                console.log("error: pagemove: unknown dir")
+        }
     },
 };
 </script>

@@ -1,21 +1,22 @@
 const ipdata = require('./hosts.js');
 const moment = require('moment');
 
-export const STATS_LINES = 6;
+export const STATS_LINES = 3;
 export const HOSTS_COUNT = 100;
 export const NMAP_ID = 'nmap';
 
 // tag-ids + classes
 const CONTAINER_ID = "world-map";
 const STAT_CONTAINER = "stat-container";
+const NAV_CONTAINER = "nav-container";
 const HOST_CONTAINER = "host-container";
 const DETAIL_CONTAINER = "detail-container";
 const DETAIL_BOX = "host-detail-box";
 const DETAIL_TEXT = "host-detail-text";
-const NMAP_BOX = "nmap-detail-box"
-const NMAP_TEXT = "nmap-detail-text"
+const NMAP_BOX = "nmap-detail-box";
+const NMAP_TEXT = "nmap-detail-text";
 
-//
+// created elements' class to be removed on reset
 const CONTEXT_CLASS = "nation-context";
 
 
@@ -95,6 +96,21 @@ function useTextLayout(x, y, textArr, fontSize, textId) {
     return text;
 }
 
+function usePaginationLayout(x, y, fontSize, svgId) {
+    /*
+     * re-use static svg->polygon elements
+     * by setting attributes (e.g. graph points)
+     */
+    let svg = document.getElementById(svgId);
+    svg.style.visibility = "visible";
+    let children = Array.from(svg.children);
+    children[0].setAttribute("points", `${x + fontSize},${y} ${x},${y + fontSize/2} ${x + fontSize},${y + fontSize}`); // "870,42 850,50 870,58"
+    children[1].setAttribute("points", `${x + 2*fontSize},${y} ${x +  2*fontSize},${y + fontSize} ${x + 3*fontSize},${y + fontSize} ${x + 3*fontSize},${y}`); //"890,42, 890,58, 900,58 900,42"
+    children[2].setAttribute("points", `${x + 4*fontSize},${y} ${x + 5*fontSize},${y + fontSize/2} ${x + 4*fontSize},${y + fontSize}`); // "920,42 940,50 920,58"
+
+    return svg;
+}
+
 function growBox(action_callback) {
     let startTime = 0;
     const totalTime = 200;
@@ -157,8 +173,9 @@ function createRetrieveHostList(name, x, y, fontSize) {
         let ipArr = ip_dict['ipArr'];
         if(ipArr.length > 0) {
             let container = createAnimatedBox(x, y+fontSize*2, name, "nation-hosts-box", 90, (ip_lines-5)*fontSize, fontSize);
-            retrieveStatInfo(name, ip_dict).then((statArr) => {
+            retrieveStatInfo(name).then((statArr) => {
                 container.appendChild(useTextLayout(x, y + fontSize*1.5, statArr, fontSize-2, STAT_CONTAINER));
+                container.appendChild(usePaginationLayout(x + fontSize, y + fontSize*6, fontSize-2, NAV_CONTAINER));
                 container.appendChild(useTextLayout(x, y + fontSize*6, ipArr, fontSize-2, HOST_CONTAINER));
             })
         }
@@ -174,9 +191,6 @@ async function retrieveStatInfo(name, ip_dict) {
             statArr.push(String(data.country_hosts) + " of " + String(data.total_hosts));
             statArr.push("("  + String(data.country_ratio) + "%)");
             statArr.push("IP addresses:");
-            statArr.push("[ - ] ");
-            statArr.push(ip_dict["count"].toString());
-            statArr.push(" [ + ]");
         }
     })
     .catch((err) => console.log(err));
@@ -364,6 +378,7 @@ export function classReset(name) {
      * classHighlight()
      */
     document.getElementById(STAT_CONTAINER).style.visibility = "hidden";
+    document.getElementById(NAV_CONTAINER).style.visibility = "hidden";
     document.getElementById(HOST_CONTAINER).style.visibility = "hidden";
     document.getElementById(DETAIL_CONTAINER).style.visibility = "hidden";
 }
@@ -384,8 +399,17 @@ export function preInitHostEntries() {
 export function preInitStatEntries() {
     let list = [];
     for(let x = 0; x < STATS_LINES; x++) {
-        list.push({"id": "stats-line-" + String(x), "class": (x <= 2 ? "none" : "stat-entry")});
+        list.push({"id": "stats-line-" + String(x), "class": "stat-entry"});
     }
     return list;
+}
+
+export function preInitPaginEntries() {
+    let polygons = [
+        {"id": "nav-elem-1", "class": "pagination", "points": "", "dir": "left"},
+        {"id": "nav-elem-2", "class": "pagination", "points": "", "dir": "in"},
+        {"id": "nav-elem-3", "class": "pagination", "points": "", "dir": "right"},
+    ];
+    return polygons;
 }
 
