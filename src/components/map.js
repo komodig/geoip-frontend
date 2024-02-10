@@ -167,12 +167,10 @@ function createRetrieveHostList(name, x, y, fontSize) {
      * creates animated boxes for country info and retrieves host list and statistics to be assigned
      * to vue data() in global element tables
      */
-    let ip_lines = 100;
-
     ipdata.hostsByCountryAPI(name).then((ip_dict) => {
         let ipArr = ip_dict['ipArr'];
         if(ipArr.length > 0) {
-            let container = createAnimatedBox(x, y+fontSize*2, name, "nation-hosts-box", 90, (ip_lines-5)*fontSize, fontSize);
+            let container = createAnimatedBox(x, y+fontSize*2, name, "nation-hosts-box", 90, (ipArr.length+10)*fontSize, fontSize);
             retrieveStatInfo(name).then((statArr) => {
                 container.appendChild(useTextLayout(x, y + fontSize*1.5, statArr, fontSize-2, STAT_CONTAINER));
                 container.appendChild(usePaginationLayout(x + fontSize, y + fontSize*6, fontSize-2, NAV_CONTAINER));
