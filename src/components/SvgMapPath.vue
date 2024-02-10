@@ -21,7 +21,7 @@ export default {
 
 <style scoped>
 .SvgMapPath {
-    fill: rgb(140,200,80);
+    fill: rgb(212,255,212);
     stroke: rgb(75, 45,115);
     stroke-width: 0.5;
 }

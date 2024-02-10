@@ -37,7 +37,7 @@ function boxLayout(x, y, name, boxid, width, height, fontSize) {
     box.setAttribute("y", y);
     box.setAttribute("width", 1);
     box.setAttribute("height", 1);
-    box.setAttribute("fill", "LightGrey");
+    box.setAttribute("fill", "rgb(218,218,238)");
     box.setAttribute("fill-opacity", 0.7);
     box.setAttribute("stroke-width", 1);
     box.setAttribute("stroke", "black");
@@ -340,7 +340,7 @@ export function classHighlight(dim, name, transX, transY, fontSize) {
         return;
 
     for(let i = 0; country[i] != null; i += 1) {
-        country[i].style.fill = "rgb(200,250,150)";
+        country[i].style.fill = "rgb(170,238,150)"; //rgb(200,238,200)";
     }
     /* get mouse coordinates (slightly modificated) */
     let x = (window.event.clientX + transX) * 0.5;
@@ -354,19 +354,48 @@ export function classHighlight(dim, name, transX, transY, fontSize) {
     createRetrieveHostList(name, 1000, 10, fontSize);
 }
 
+function colorizeCountrySimple(name) {
+    let str_rgb_color = "rgb(212,255,212)";
+    let country = document.getElementsByClassName(name);
+    for(let x = 0; country[x] != null; x += 1) {
+        country[x].style.fill = str_rgb_color;
+    }
+}
+
+function colorizeCountry(name) {
+    weightedContryColor(name).then((str_rgb_color) => {
+        let country = document.getElementsByClassName(name);
+        for(let x = 0; country[x] != null; x += 1) {
+            country[x].style.fill = str_rgb_color;
+        }
+    })
+}
+
+async function weightedContryColor(name) {
+    let color_ratio = 1;
+    await ipdata.hostsTotalRateAPI(name).then(data => {
+        if(data.country_hosts > 0) {
+            color_ratio = data.country_ratio;
+        }
+    })
+    .catch((err) => console.log(err));
+
+    console.log(color_ratio);
+    let res = "rgb(" + (230 / color_ratio).toFixed() + "," + (255 / color_ratio).toFixed() + "," + (230 / color_ratio).toFixed() + ")";
+    console.log(res);
+    return res;
+}
+
 export function classReset(name) {
     /*
      * remove animated box elements created by
      * classHighlight()
      */
-    let country = document.getElementsByClassName(name);
 
     if(anythingDocked())
         return;
 
-    for(let x = 0; country[x] != null; x += 1) {
-        country[x].style.fill = "rgb(140,200,80)";
-    }
+    colorizeCountrySimple(name);
     let container = document.getElementById("world-map");
     let el = Array.from(document.getElementsByClassName(CONTEXT_CLASS));
     el.forEach(v => {
