@@ -37,7 +37,7 @@ function boxLayout(x, y, name, boxid, width, height, fontSize) {
     box.setAttribute("y", y);
     box.setAttribute("width", 1);
     box.setAttribute("height", 1);
-    box.setAttribute("fill", "rgb(218,218,238)");
+    box.setAttribute("fill", "rgb(208,208,238)");
     box.setAttribute("fill-opacity", 0.7);
     box.setAttribute("stroke-width", 1);
     box.setAttribute("stroke", "black");
@@ -302,6 +302,7 @@ function prettyDate(timestamp) {
 
 export function createTitle() {
     let container = document.getElementById(CONTAINER_ID);
+    container.appendChild(infoTextLayout(515, 12, 'click country to lock/unlock', 10, "page-hint", "title"));
     container.appendChild(infoTextLayout(170, 100, 'tracking brute force cyber attacks', 52, "page-title", "title"));
 
     ipdata.timestampAPI().then(data => {
