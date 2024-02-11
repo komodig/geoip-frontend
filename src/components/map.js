@@ -303,7 +303,7 @@ export function createTitle() {
     container.appendChild(infoTextLayout(515, 12, 'click country to lock/unlock', 10, "page-hint", "title"));
     container.appendChild(infoTextLayout(170, 100, 'tracking brute force cyber attacks', 52, "page-title", "title"));
 
-    ipdata.timestampAPI().then(data => {
+    ipdata.timestampAPI(1).then(data => {
         let pretty_date = prettyDate(data.timestamp);
         container.appendChild(infoTextLayout(700, 160, "updated: " + pretty_date, 16, "page-subtitle", "title"));
     })

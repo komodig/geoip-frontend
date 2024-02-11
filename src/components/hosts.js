@@ -4,13 +4,8 @@ export async function hostsByCountryAPI(country) {
     const url = url_path + "hosts/" + country + "/?page=1";
     const response = await fetch(url);
     let data = await response.json();
-    let ip_list = data['results'];
-    let count = data['count'];
-    let prev = data['previous'];
-    let next = data['next'];
+    let ip_list = data;
     let ipArr = [];
-    console.log(`${prev} ---- ${count} ---- ${next}`);
-
     ip_list.forEach(obj => {
         Object.entries(obj).forEach(([key, value]) => {
             //console.log(`${key} ${value}`);
@@ -19,7 +14,7 @@ export async function hostsByCountryAPI(country) {
         });
     });
 
-    return {"ipArr": ipArr, "prev": prev, "count": count, "next": next}
+    return {"ipArr": ipArr}
 }
 
 export async function hostsTotalRateAPI(country) {
@@ -31,12 +26,11 @@ export async function hostsTotalRateAPI(country) {
 }
 
 export async function timestampAPI(limit) {
-    const url = url_path + "times/";
+    const url = url_path + "times/" + limit + "/";
     const response = await fetch(url);
     const data = await response.json();
 
-    // only return single (latest) timestamp
-    return data['results'][0];
+    return data[0];
 }
 
 export async function hostByAddrAPI(addr) {
@@ -44,6 +38,6 @@ export async function hostByAddrAPI(addr) {
     const response = await fetch(url);
     const data = await response.json();
 
-    return data['results'];
+    return data;
 
 }
