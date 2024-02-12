@@ -340,7 +340,7 @@ export function classHighlight(dim, name, transX, transY, fontSize) {
         return;
 
     for(let i = 0; country[i] != null; i += 1) {
-        country[i].style.fill = "rgb(170,238,150)"; //rgb(200,238,200)";
+        country[i].style.fill = "rgb(80,240,220)";
     }
     /* get mouse coordinates (slightly modificated) */
     let x = (window.event.clientX + transX) * 0.5;
@@ -354,38 +354,6 @@ export function classHighlight(dim, name, transX, transY, fontSize) {
     createRetrieveHostList(name, 1000, 10, fontSize);
 }
 
-function colorizeCountrySimple(name) {
-    let str_rgb_color = "rgb(212,255,212)";
-    let country = document.getElementsByClassName(name);
-    for(let x = 0; country[x] != null; x += 1) {
-        country[x].style.fill = str_rgb_color;
-    }
-}
-
-function colorizeCountry(name) {
-    weightedContryColor(name).then((str_rgb_color) => {
-        let country = document.getElementsByClassName(name);
-        for(let x = 0; country[x] != null; x += 1) {
-            country[x].style.fill = str_rgb_color;
-        }
-    })
-}
-
-async function weightedContryColor(name) {
-    let color_ratio = 1;
-    await ipdata.hostsTotalRateAPI(name).then(data => {
-        if(data.country_hosts > 0) {
-            color_ratio = data.country_ratio;
-        }
-    })
-    .catch((err) => console.log(err));
-
-    console.log(color_ratio);
-    let res = "rgb(" + (230 / color_ratio).toFixed() + "," + (255 / color_ratio).toFixed() + "," + (230 / color_ratio).toFixed() + ")";
-    console.log(res);
-    return res;
-}
-
 export function classReset(name) {
     /*
      * remove animated box elements created by
@@ -395,7 +363,7 @@ export function classReset(name) {
     if(anythingDocked())
         return;
 
-    colorizeCountrySimple(name);
+    colorizeCountry(name);
     let container = document.getElementById("world-map");
     let el = Array.from(document.getElementsByClassName(CONTEXT_CLASS));
     el.forEach(v => {
@@ -410,6 +378,36 @@ export function classReset(name) {
     document.getElementById(NAV_CONTAINER).style.visibility = "hidden";
     document.getElementById(HOST_CONTAINER).style.visibility = "hidden";
     document.getElementById(DETAIL_CONTAINER).style.visibility = "hidden";
+}
+
+function colorizeCountry(name) {
+    weightedContryColor(name).then((str_rgb_color) => {
+        let country = document.getElementsByClassName(name);
+        console.log(str_rgb_color);
+        for(let x = 0; country[x] != null; x += 1) {
+            country[x].style.fill = str_rgb_color;
+        }
+    })
+}
+
+async function weightedContryColor(name) {
+    let color_ratio = 1;
+    await ipdata.hostsTotalRateAPI(name).then(data => {
+        if(data.country_hosts > 0) {
+            if(data.country_ratio > 1) {
+                color_ratio = data.country_ratio;
+            }
+        }
+    })
+    .catch((err) => console.log(err));
+
+    let res = "rgb(212,233,212)";
+    console.log(color_ratio);
+    if(color_ratio > 1) {
+        res = "rgb(" + (200 - color_ratio*3).toFixed() + "," + (255) + "," + (200 - color_ratio*3).toFixed() + ")";
+    }
+
+    return res;
 }
 
 export function initPage() {
