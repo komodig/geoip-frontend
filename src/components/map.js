@@ -15,6 +15,7 @@ const DETAIL_BOX = "host-detail-box";
 const DETAIL_TEXT = "host-detail-text";
 const NMAP_BOX = "nmap-detail-box";
 const NMAP_TEXT = "nmap-detail-text";
+const SESSION_RGB_PREFIX = "rgb-";
 
 // created elements' class to be removed on reset
 const CONTEXT_CLASS = "nation-context";
@@ -340,7 +341,7 @@ export function classHighlight(dim, name, transX, transY, fontSize) {
         return;
 
     for(let i = 0; country[i] != null; i += 1) {
-        country[i].style.fill = "rgb(80,240,220)";
+        country[i].style.fill = "rgb(255,150,220)";
     }
     /* get mouse coordinates (slightly modificated) */
     let x = (window.event.clientX + transX) * 0.5;
@@ -381,16 +382,14 @@ export function classReset(name) {
 }
 
 function colorizeCountry(name) {
-    weightedContryColor(name).then((str_rgb_color) => {
-        let country = document.getElementsByClassName(name);
-        console.log(str_rgb_color);
-        for(let x = 0; country[x] != null; x += 1) {
-            country[x].style.fill = str_rgb_color;
-        }
-    })
+    let str_rgb_color = sessionStorage.getItem(SESSION_RGB_PREFIX + name.replace(/\ /g, "-"));
+    let country = document.getElementsByClassName(name);
+    for(let x = 0; country[x] != null; x += 1) {
+        country[x].style.fill = str_rgb_color;
+    }
 }
 
-async function weightedContryColor(name) {
+async function weightedCountryColor(name) {
     let color_ratio = 1;
     await ipdata.hostsTotalRateAPI(name).then(data => {
         if(data.country_hosts > 0) {
@@ -402,7 +401,6 @@ async function weightedContryColor(name) {
     .catch((err) => console.log(err));
 
     let res = "rgb(212,233,212)";
-    console.log(color_ratio);
     if(color_ratio > 1) {
         res = "rgb(" + (200 - color_ratio*3).toFixed() + "," + (255) + "," + (200 - color_ratio*3).toFixed() + ")";
     }
@@ -413,6 +411,7 @@ async function weightedContryColor(name) {
 export function initPage() {
     sessionStorage.clear();
     sessionStorage.setItem(DOCKED_NAME, NOTHING_DOCKED);
+    initCountryColors();
 }
 
 export function preInitHostEntries() {
@@ -440,3 +439,16 @@ export function preInitPaginEntries() {
     return polygons;
 }
 
+function initCountryColors() {
+    let countries = document.getElementsByClassName("SvgMapPath");
+    for(let x = 0; x < countries.length; x++) {
+        let cname = countries[x].firstChild.className.baseVal;
+        let val = sessionStorage.getItem(SESSION_RGB_PREFIX + cname.replace(/\ /g, "-"));
+        if(val == null) {
+            weightedCountryColor(cname).then((rgb_str) => {
+                sessionStorage.setItem(SESSION_RGB_PREFIX + cname.replace(/\ /g, "-"), rgb_str);
+                colorizeCountry(cname);
+            })
+        }
+    }
+}
