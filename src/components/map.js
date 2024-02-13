@@ -16,6 +16,7 @@ const DETAIL_TEXT = "host-detail-text";
 const NMAP_BOX = "nmap-detail-box";
 const NMAP_TEXT = "nmap-detail-text";
 const SESSION_RGB_PREFIX = "rgb-";
+const SCAN_MIN_LENGTH = 210;
 
 // created elements' class to be removed on reset
 const CONTEXT_CLASS = "nation-context";
@@ -218,7 +219,7 @@ export function createRetrieveHostDetail(addr, fontSize) {
                     dArr.push(key + " : " + value);
             }
             container.appendChild(createTextLayout(x, y, dArr, fontSize, DETAIL_TEXT));
-            if(hostData[0]['host_detail'] && hostData[0]['host_detail']['nmap'].length > 210) {
+            if(hostData[0]['host_detail'] && hostData[0]['host_detail']['nmap'].length > SCAN_MIN_LENGTH) {
                 container.appendChild(useTextLayout(x, (y+30+dArr.length*fontSize),
                         ["[ open scan details (length "+ hostData[0]['host_detail']['nmap'].length +") ]",],
                         fontSize, DETAIL_CONTAINER));
