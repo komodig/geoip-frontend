@@ -47,7 +47,7 @@ function boxLayout(x, y, name, boxid, width, height, fontSize) {
     return box;
 }
 
-function infoTextLayout(x, y, opacity, name, fontSize, textId, classId) {
+function onelinerTextLayout(x, y, opacity, name, fontSize, textId, classId) {
     let text = document.createElementNS("http://www.w3.org/2000/svg", "text");
     text.setAttribute("id", textId);
     text.setAttribute("class", classId);
@@ -82,6 +82,7 @@ function useTextLayout(x, y, textArr, fontSize, textId) {
     /*
      * re-use static text->tspan (or whatever) elements
      * by filling-in content (i.e. innerHTML) from REST-API
+     * and switch element from hidden to visible
      * useful for elements defined with events in SvgMap.vue
      */
     let text = document.getElementById(textId);
@@ -160,7 +161,7 @@ function middlePos(center, mouse) {
 
 function createNameBox(name, x, y, fontSize) {
     let container = createAnimatedBox(middlePos(600, x), middlePos(300, y), name, "nation-title-box", 100, fontSize*1.6, fontSize);
-    container.appendChild(infoTextLayout(middlePos(600, x), middlePos(300, y), 1.0, name, fontSize, "nation-title", CONTEXT_CLASS));
+    container.appendChild(onelinerTextLayout(middlePos(600, x), middlePos(300, y), 1.0, name, fontSize, "nation-title", CONTEXT_CLASS));
 
     return container;
 }
@@ -303,12 +304,12 @@ function prettyDate(timestamp) {
 
 export function createTitle() {
     let container = document.getElementById(CONTAINER_ID);
-    container.appendChild(infoTextLayout(515, 12, 0.5, 'click country to lock/unlock', 10, "page-hint", "title"));
-    container.appendChild(infoTextLayout(170, 100, 0.5, 'tracking brute force cyber attacks', 52, "page-title", "title"));
+    container.appendChild(onelinerTextLayout(515, 12, 0.5, 'click country to lock/unlock', 10, "page-hint", "title"));
+    container.appendChild(onelinerTextLayout(170, 100, 0.5, 'tracking brute force cyber attacks', 52, "page-title", "title"));
 
     ipdata.timestampAPI(1).then(data => {
         let pretty_date = prettyDate(data.timestamp);
-        container.appendChild(infoTextLayout(700, 160, 0.5, "updated: " + pretty_date, 16, "page-subtitle", "title"));
+        container.appendChild(onelinerTextLayout(700, 160, 0.5, "updated: " + pretty_date, 16, "page-subtitle", "title"));
     })
     .catch((err) => console.log(err));
 }
