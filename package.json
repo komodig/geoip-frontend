@@ -2,7 +2,7 @@
   "type": "module",
   "scripts": {
     "build": "vite build",
-    "serve": "serve -s build"
+    "serve": "serve -s dist"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^6.0.9",
