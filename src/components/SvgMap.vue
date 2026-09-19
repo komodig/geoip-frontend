@@ -72,10 +72,10 @@
 </template>
 
 <script>
-import SvgMapPath from "./SvgMapPath";
-import HostDetail from "./HostDetail";
-import StatDetail from "./StatDetail";
-import Pagination from "./Pagination";
+import SvgMapPath from "./SvgMapPath.vue";
+import HostDetail from "./HostDetail.vue";
+import StatDetail from "./StatDetail.vue";
+import Pagination from "./Pagination.vue";
 import {classHighlight,
     classReset,
     classDockUndock,

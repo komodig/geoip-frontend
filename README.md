@@ -19,9 +19,9 @@ into ~/.vim
 
 ## Install nvm, node.js and vue
 ```
-curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.3/install.sh | bash
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.7/install.sh | bash
 nvm list-remote
-nvm install v16.20.2     # or latest node.js version
+nvm install v24.21.0     # or latest node.js version
 ```
 
 ## Install vue with npm
@@ -38,7 +38,8 @@ npm install -D vue-loader vue-template-compiler
 
 ## Misc dependencies...
 ```
-npm install -g vue-moment --save
+npm install --save-dev vite @vitejs/plugin-vue
+npm install moment
 npm install --global serve
 ```
 
