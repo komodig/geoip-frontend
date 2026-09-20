@@ -21,6 +21,18 @@ const SCAN_MIN_LENGTH = 210;
 // created elements' class to be removed on reset
 const CONTEXT_CLASS = "nation-context";
 
+// click-locking a country paints it white and fades the rest of the world
+// down to violet; the fading itself is done by css transitions (see map.css)
+const FOCUS_MODE_CLASS = "focus-mode";
+const FOCUS_TARGET_CLASS = "focus-target";
+
+/*
+ * the colour fade runs first and the zoom is started once it is over, so the
+ * highlight clearly leads the movement. keep in sync with the transition
+ * durations of .focus-mode in map.css
+ */
+export const FOCUS_FADE_MS = 450;
+
 // delay before a hovered country's host list is requested, so that sweeping
 // the pointer across the map does not fire one request per country
 const HOVER_DELAY = 120;
@@ -338,15 +350,84 @@ const DOCKED_NAME = 'docked' // the docked-flag's name
 const NOTHING_DOCKED = ''
 
 export function classDockUndock(name) {
+    /*
+     * returns which country changed state and whether it is now docked, so
+     * that the caller can drive the focus animation. note that clicking any
+     * country while one is docked undocks the docked one, which is not
+     * necessarily the one that was clicked
+     */
     if(anythingDocked()) {
         //do undock country class
         let docked = sessionStorage.getItem(DOCKED_NAME)
         sessionStorage.setItem(DOCKED_NAME, NOTHING_DOCKED);
         classReset(docked);
+        return {"docked": false, "name": docked};
     } else {
         // dock
         sessionStorage.setItem(DOCKED_NAME, name);
+        return {"docked": true, "name": name};
     }
+}
+
+export function focusColors(name) {
+    /*
+     * only toggles classes - the actual fading is left to css transitions so
+     * that no javascript runs per frame
+     */
+    countryPaths(name).forEach(p => p.classList.add(FOCUS_TARGET_CLASS));
+    document.getElementById(CONTAINER_ID).classList.add(FOCUS_MODE_CLASS);
+}
+
+export function unfocusColors(name) {
+    document.getElementById(CONTAINER_ID).classList.remove(FOCUS_MODE_CLASS);
+    countryPaths(name).forEach(p => p.classList.remove(FOCUS_TARGET_CLASS));
+}
+
+function countryPaths(name) {
+    return Array.from(document.getElementsByClassName(name));
+}
+
+export function countryCenter(name) {
+    /*
+     * middle of the union of all paths of a country (some are split into
+     * several paths, e.g. Angola). getBBox() reports untransformed geometry,
+     * i.e. the same units the pan/zoom transform is expressed in
+     */
+    let paths = countryPaths(name);
+    if(paths.length == 0)
+        return null;
+
+    let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+    paths.forEach(p => {
+        let b = p.getBBox();
+        minX = Math.min(minX, b.x);
+        minY = Math.min(minY, b.y);
+        maxX = Math.max(maxX, b.x + b.width);
+        maxY = Math.max(maxY, b.y + b.height);
+    });
+
+    return {"x": (minX + maxX) / 2, "y": (minY + maxY) / 2};
+}
+
+export function visibleCenterPoint(fallbackX, fallbackY) {
+    /*
+     * the point (in map units) that currently sits in the middle of the
+     * visible part of the svg. getScreenCTM() maps map units to client
+     * pixels, so inverting it accounts for viewBox letterboxing, the window
+     * size and how far the page is scrolled
+     */
+    let svg = document.getElementById(CONTAINER_ID);
+    let ctm = svg.getScreenCTM();
+    if(!ctm)
+        return {"x": fallbackX, "y": fallbackY};
+
+    let r = svg.getBoundingClientRect();
+    let pt = svg.createSVGPoint();
+    pt.x = (Math.max(r.left, 0) + Math.min(r.right, window.innerWidth)) / 2;
+    pt.y = (Math.max(r.top, 0) + Math.min(r.bottom, window.innerHeight)) / 2;
+
+    let p = pt.matrixTransform(ctm.inverse());
+    return {"x": p.x, "y": p.y};
 }
 
 function anythingDocked() {

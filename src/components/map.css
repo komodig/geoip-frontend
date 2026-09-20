@@ -20,3 +20,76 @@ polygon.move {
 polygon.move:hover {
     stroke: white;
 }
+
+/*
+ * water: a plain rect behind the map so the background can be faded with a
+ * css transition instead of being animated from javascript
+ */
+#ocean {
+    fill: rgb(255,255,255);
+    transition: fill 200ms linear;
+}
+
+/*
+ * pan/zoom. the transform is set as a css property (see mapTransform in
+ * SvgMap.vue) so the browser can interpolate it by itself: one transition on
+ * one element, no requestAnimationFrame loop.
+ * transform-origin must be pinned to the viewBox origin, otherwise css would
+ * rotate/scale around the middle of the box and not match the plain
+ * translate()/scale() the coordinates are calculated for.
+ */
+#world-map > g {
+    transform-box: view-box;
+    transform-origin: 0 0;
+    transition: transform 500ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* short fade for the hover highlight, so hovering still feels immediate */
+#world-map .SvgMapPath path {
+    transition: fill 200ms linear;
+}
+
+/*
+ * click-locked ("docked") country: the world fades to violet, the water a bit
+ * darker than the land, and the locked country turns white.
+ * !important is required because colorizeCountry() writes fill as an inline
+ * style, which would otherwise win over these rules.
+ */
+#world-map.focus-mode #ocean {
+    fill: rgb(18,0,38);
+    transition: fill 450ms ease-in-out;
+}
+#world-map.focus-mode .SvgMapPath path {
+    fill: rgb(46,19,85) !important;
+    transition: fill 450ms ease-in-out;
+}
+#world-map.focus-mode .SvgMapPath path.focus-target {
+    fill: rgb(255,255,255) !important;
+}
+
+/*
+ * the focus zoom is slower than a button click, and it only starts after the
+ * fade above has finished (FOCUS_FADE_MS in map.js).
+ * if the zoom ever stutters on weak hardware, adding "will-change: transform"
+ * here promotes the map to its own layer for the duration of the focus - at
+ * the cost of re-rasterising the vectors, i.e. a short blur while scaling.
+ */
+#world-map.focus-mode > g {
+    transition: transform 900ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/*
+ * headline and "updated:" line are only in the way once a country is locked,
+ * so they fade out together with the rest of the world and come back on
+ * unfocus. done as a descendant rule rather than from javascript because
+ * page-subtitle is appended late (it waits for timestampAPI), and a rule
+ * applies to it whenever it turns up.
+ */
+#page-title,
+#page-subtitle {
+    transition: opacity 450ms ease-in-out;
+}
+#world-map.focus-mode #page-title,
+#world-map.focus-mode #page-subtitle {
+    opacity: 0;
+}

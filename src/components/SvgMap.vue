@@ -10,7 +10,8 @@
         ref="svg",
         id="world-map",
     )
-        g(:transform="`translate(${transX}, ${transY}) scale(${scale})`" ref="g")
+        rect#ocean(x="0", y="0", :width="viewBoxW", :height="viewBoxH")
+        g(:style="mapTransform" ref="g")
             SvgMapPath(
                 v-for="path in nations",
                 :key="path.id",
@@ -80,6 +81,11 @@ import * as svg_data from "./world.js";
 import {classHighlight,
     classReset,
     classDockUndock,
+    focusColors,
+    unfocusColors,
+    countryCenter,
+    visibleCenterPoint,
+    FOCUS_FADE_MS,
     preInitHostEntries,
     preInitStatEntries,
     preInitPaginEntries,
@@ -88,6 +94,12 @@ import {classHighlight,
     NMAP_ID,
 } from "./map.js"
 
+
+// one zoom "step" of the +/- buttons; click-locking zooms in by 4 of them
+const ZOOM_STEP = 0.2;
+const PAN_STEP = 50;
+const MIN_SCALE = 0.2;
+const FOCUS_ZOOM_STEPS = 4;
 
 let countryHosts = [];
 let countryStats = [];
@@ -115,7 +127,19 @@ export default {
             stats: countryStats,
             pagenav: pagination,
             details: hostDetailAPIs,
+            savedView: null,
+            focusTimer: null,
         };
+    },
+    computed: {
+        /*
+         * driven as a css transform rather than the transform attribute:
+         * attribute changes cannot be transitioned, a css transform on this
+         * single <g> can be, which keeps pan/zoom off the javascript thread
+         */
+        mapTransform() {
+            return {transform: `translate(${this.transX}px, ${this.transY}px) scale(${this.scale})`};
+        },
     },
     setup(props) {
         countryHosts = preInitHostEntries();
@@ -123,25 +147,67 @@ export default {
         pagination = preInitPaginEntries();
         },
     methods: {
+        applyView(scale, transX, transY) {
+            // one assignment point for the whole view; css animates the rest
+            this.scale = scale;
+            this.transX = transX;
+            this.transY = transY;
+        },
+        zoomBy(delta) {
+            /*
+             * zoom around the middle of the screen instead of shifting transX
+             * by a fixed amount, so whatever the user is looking at stays put
+             */
+            let next = Math.max(MIN_SCALE, this.scale + delta);
+            let c = visibleCenterPoint(this.viewBoxW / 2, this.viewBoxH / 2);
+            this.applyView(next,
+                c.x - (c.x - this.transX) * next / this.scale,
+                c.y - (c.y - this.transY) * next / this.scale);
+        },
+        panBy(dx, dy) {
+            this.applyView(this.scale, this.transX + dx, this.transY + dy);
+        },
         zoomIn() {
-            this.scale += 0.2;
-            this.transX -= 100;
+            this.zoomBy(ZOOM_STEP);
         },
         zoomOut() {
-            this.scale -= 0.2;
-            this.transX += 100;
+            this.zoomBy(-ZOOM_STEP);
         },
         moveRight() {
-            this.transX += 50;
+            this.panBy(PAN_STEP, 0);
         },
         moveLeft() {
-            this.transX -= 50;
+            this.panBy(-PAN_STEP, 0);
         },
         moveDown() {
-            this.transY -= 50;
+            this.panBy(0, -PAN_STEP);
         },
         moveUp() {
-            this.transY += 50;
+            this.panBy(0, PAN_STEP);
+        },
+        focusCountry(name) {
+            let center = countryCenter(name);
+            if(!center)
+                return;
+
+            this.savedView = {"scale": this.scale, "transX": this.transX, "transY": this.transY};
+            focusColors(name);
+
+            // ...and only once the world has faded, move in on the country
+            let next = this.scale + FOCUS_ZOOM_STEPS * ZOOM_STEP;
+            clearTimeout(this.focusTimer);
+            this.focusTimer = setTimeout(() => {
+                let c = visibleCenterPoint(this.viewBoxW / 2, this.viewBoxH / 2);
+                this.applyView(next, c.x - center.x * next, c.y - center.y * next);
+            }, FOCUS_FADE_MS);
+        },
+        unfocusCountry(name) {
+            clearTimeout(this.focusTimer);
+            unfocusColors(name);
+            if(this.savedView) {
+                this.applyView(this.savedView.scale, this.savedView.transX, this.savedView.transY);
+                this.savedView = null;
+            }
         },
         show(ev, el) {
             classHighlight(ev, el.d, el.class, this.transX, this.transY, this.fontSize);
@@ -150,7 +216,11 @@ export default {
             classReset(el.class);
         },
         toggleFocused(el) {
-            classDockUndock(el.class);
+            let state = classDockUndock(el.class);
+            if(state.docked)
+                this.focusCountry(state.name);
+            else
+                this.unfocusCountry(state.name);
         },
         hostDetailBox(tspan) {
             createRetrieveMoreDetail(document.getElementById(tspan.id).getAttribute("addr"), 12, tspan.id);
