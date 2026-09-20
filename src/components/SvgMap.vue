@@ -76,6 +76,7 @@ import SvgMapPath from "./SvgMapPath.vue";
 import HostDetail from "./HostDetail.vue";
 import StatDetail from "./StatDetail.vue";
 import Pagination from "./Pagination.vue";
+import * as svg_data from "./world.js";
 import {classHighlight,
     classReset,
     classDockUndock,
@@ -87,7 +88,7 @@ import {classHighlight,
     NMAP_ID,
 } from "./map.js"
 
-let svg_data = require('./world.js');
+
 let countryHosts = [];
 let countryStats = [];
 let pagination = [];

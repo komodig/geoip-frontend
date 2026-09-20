@@ -1,5 +1,5 @@
-const ipdata = require('./hosts.js');
-const moment = require('moment');
+import * as ipdata from './hosts.js';
+import moment from 'moment';
 
 export const STATS_LINES = 3;
 export const HOSTS_COUNT = 100;
