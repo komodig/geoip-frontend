@@ -21,6 +21,19 @@ const SCAN_MIN_LENGTH = 210;
 // created elements' class to be removed on reset
 const CONTEXT_CLASS = "nation-context";
 
+// delay before a hovered country's host list is requested, so that sweeping
+// the pointer across the map does not fire one request per country
+const HOVER_DELAY = 120;
+
+/*
+ * every hover (and every reset) bumps hoverToken. async handlers capture the
+ * token they were started with and drop their result if it no longer matches,
+ * so a slow response for a country the pointer already left cannot fill the
+ * shared host-container while a different country's box is on screen
+ */
+let hoverToken = 0;
+let hoverTimer = null;
+
 
 function boxLayout(x, y, name, boxid, width, height, fontSize) {
     let box = document.createElementNS("http://www.w3.org/2000/svg", "rect");
@@ -115,7 +128,7 @@ function usePaginationLayout(x, y, fontSize, svgId) {
     return svg;
 }
 
-function growBox(action_callback) {
+function growBox(boxId, action_callback) {
     let startTime = 0;
     const totalTime = 200;
     // nested function
@@ -123,11 +136,11 @@ function growBox(action_callback) {
         if (!startTime) startTime = timestamp;
         // progress from 0 to 1 over totalTime
         const progress = (timestamp - startTime) / totalTime;
-        try {
-            action_callback(progress);
-        } catch(err) {
-            void(0);
-        }
+        // the box may have been removed mid-animation (pointer left the
+        // country); stop instead of spinning for the rest of totalTime
+        if (!document.getElementById(boxId))
+            return;
+        action_callback(progress);
         if (progress < 1) {
             window.requestAnimationFrame(animateStep);
         }
@@ -138,13 +151,16 @@ function growBox(action_callback) {
 function createAnimatedBox(x, y, name, boxId, width, height, fontSize) {
     let container = document.getElementById(CONTAINER_ID);
 
+    // drop a leftover box of the same id, otherwise duplicate ids end up in the
+    // DOM and getElementById() silently returns whichever comes first
+    removeId(boxId);
     container.appendChild(boxLayout(x, y, name, boxId, width, height, fontSize));
 
-    growBox((progress) => {
+    growBox(boxId, (progress) => {
         let box = document.getElementById(boxId);
         box.setAttribute('width', box.getAttribute('finalWidth') * progress);
     });
-    growBox((progress) => {
+    growBox(boxId, (progress) => {
         let box = document.getElementById(boxId);
         box.setAttribute('height', box.getAttribute('finalHeight') * progress);
     });
@@ -166,16 +182,20 @@ function createNameBox(name, x, y, fontSize) {
     return container;
 }
 
-function createRetrieveHostList(name, x, y, fontSize) {
+function createRetrieveHostList(name, x, y, fontSize, token) {
     /*
      * creates animated boxes for country info and retrieves host list and statistics to be assigned
      * to vue data() in global element tables
      */
     ipdata.hostsByCountryAPI(name).then((ip_dict) => {
+        if(token !== hoverToken)
+            return;
         let ipArr = ip_dict['ipArr'];
         if(ipArr.length > 0) {
             let container = createAnimatedBox(x, y+fontSize*2, name, "nation-hosts-box", 90, (ipArr.length+10)*fontSize, fontSize);
             retrieveStatInfo(name).then((statArr) => {
+                if(token !== hoverToken)
+                    return;
                 container.appendChild(useTextLayout(x, y + fontSize*1.5, statArr, fontSize-2, STAT_CONTAINER));
                 container.appendChild(usePaginationLayout(x + fontSize, y + fontSize*6, fontSize-2, NAV_CONTAINER));
                 container.appendChild(useTextLayout(x, y + fontSize*6, ipArr, fontSize-2, HOST_CONTAINER));
@@ -353,8 +373,13 @@ export function classHighlight(ev, dim, name, transX, transY, fontSize) {
     //console.log(name + " x: " + pArr[1] + " y: " + pArr[2]);
     //console.log("mouse: " + x + " / " +y);
 
+    // the name box is local and synchronous, so it stays immediate; only the
+    // fetch-driven host list is debounced
     createNameBox(name, x, y, fontSize);
-    createRetrieveHostList(name, 1000, 10, fontSize);
+
+    const token = ++hoverToken;
+    clearTimeout(hoverTimer);
+    hoverTimer = setTimeout(() => createRetrieveHostList(name, 1000, 10, fontSize, token), HOVER_DELAY);
 }
 
 export function classReset(name) {
@@ -365,6 +390,10 @@ export function classReset(name) {
 
     if(anythingDocked())
         return;
+
+    // invalidate a pending or in-flight host list for the country being left
+    clearTimeout(hoverTimer);
+    hoverToken++;
 
     colorizeCountry(name);
     let container = document.getElementById("world-map");
