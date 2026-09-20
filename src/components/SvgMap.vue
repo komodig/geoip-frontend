@@ -15,7 +15,7 @@
                 v-for="path in nations",
                 :key="path.id",
                 v-bind="path",
-                v-on:mouseenter="show(path)",
+                v-on:mouseenter="show($event, path)",
                 v-on:mouseleave="reset(path)",
                 v-on:click="toggleFocused(path)",
             )
@@ -58,7 +58,7 @@
                 v-bind="tspan",
                 v-on:mouseenter="enterTspan(tspan)",
                 v-on:mouseleave="leaveTspan(tspan)",
-                v-on:click="detailBox(tspan)",
+                v-on:click="detailBox($event, tspan)",
             )
         text(id="detail-container")
             HostDetail(
@@ -143,8 +143,8 @@ export default {
         moveUp() {
             this.transY += 50;
         },
-        show(el) {
-            classHighlight(el.d, el.class, this.transX, this.transY, this.fontSize);
+        show(ev, el) {
+            classHighlight(ev, el.d, el.class, this.transX, this.transY, this.fontSize);
         },
         reset(el) {
             classReset(el.class);
@@ -155,8 +155,8 @@ export default {
         hostDetailBox(tspan) {
             createRetrieveMoreDetail(document.getElementById(tspan.id).getAttribute("addr"), 12, tspan.id);
         },
-        detailBox(tspan) {
-            createRetrieveHostDetail(document.getElementById(tspan.id).innerHTML, 12);
+        detailBox(ev, tspan) {
+            createRetrieveHostDetail(ev, document.getElementById(tspan.id).innerHTML, 12);
         },
         enterTspan(tspan) {
             document.getElementById(tspan.id).setAttribute("text-decoration", "underline");

@@ -203,9 +203,9 @@ async function retrieveStatInfo(name, ip_dict) {
         return statArr;
 }
 
-export function createRetrieveHostDetail(addr, fontSize) {
+export function createRetrieveHostDetail(ev, addr, fontSize) {
     let x = 700;
-    let y = window.event.clientY * 0.5;
+    let y = ev.clientY * 0.5;
     let boxHeight = 24 * fontSize
 
     cleanupDetails();
@@ -336,7 +336,7 @@ function anythingDocked() {
         return true;
 }
 
-export function classHighlight(dim, name, transX, transY, fontSize) {
+export function classHighlight(ev, dim, name, transX, transY, fontSize) {
     let country = document.getElementsByClassName(name);
 
     if(anythingDocked())
@@ -346,8 +346,8 @@ export function classHighlight(dim, name, transX, transY, fontSize) {
         country[i].style.fill = "rgb(255,150,220)";
     }
     /* get mouse coordinates (slightly modificated) */
-    let x = (window.event.clientX + transX) * 0.5;
-    let y = (window.event.clientY + transY) * 0.5;
+    let x = (ev.clientX + transX) * 0.5;
+    let y = (ev.clientY + transY) * 0.5;
 
     //var pArr = dim.split(" ", 3);
     //console.log(name + " x: " + pArr[1] + " y: " + pArr[2]);
