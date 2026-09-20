@@ -8,10 +8,9 @@ Built with **Vue 3** and **Vite**.
 git clone git://github.com/komodig/geoip-frontend.git
 ```
 
-## manually create file
-## and edit with your path (string) to backend url
+## manually create file with your path (string) to backend url
 ```
-cp src/components/hosts_config.js.example src/components/hosts_config.js
+cp hosts_config.js.example hosts_config.js
 ```
 
 ## Install nvm and node.js
