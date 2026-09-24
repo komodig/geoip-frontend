@@ -444,7 +444,7 @@ export function classHighlight(ev, dim, name, transX, transY, fontSize) {
         return;
 
     for(let i = 0; country[i] != null; i += 1) {
-        country[i].style.fill = "rgb(255,150,220)";
+        country[i].style.fill = "rgb(140,91,158)";
     }
     /* get mouse coordinates (slightly modificated) */
     let x = (ev.clientX + transX) * 0.5;
