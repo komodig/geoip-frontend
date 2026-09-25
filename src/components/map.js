@@ -345,9 +345,9 @@ export function createTitle() {
     })
     .catch((err) => console.log(err));
 
-    ipdata.hostNewsAPI(10).then(data => {
+    let maxNews = 10;
+    ipdata.hostNewsAPI(maxNews).then(data => {
         const fontSize = 12;
-        const gap = fontSize; // space between two entries
         let y = 200;
         let opacity = 0.6;
         Object.keys(data).forEach((key, i) => {
@@ -356,7 +356,9 @@ export function createTitle() {
             // the width is only known once the text is rendered, so the next
             // entry starts right after this one instead of at a fixed offset
             y += fontSize;
-            opacity -= (i/10);
+            if(i >= maxNews/2) {
+                opacity -= (i/10);
+            }
         });
     })
     .catch((err) => console.log(err));
