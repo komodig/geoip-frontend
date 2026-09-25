@@ -348,13 +348,13 @@ export function createTitle() {
     ipdata.hostNewsAPI(5).then(data => {
         const fontSize = 10;
         const gap = fontSize; // space between two entries
-        let x = 700;
+        let y = 200;
         Object.keys(data).forEach((key, i) => {
-            let text = onelinerTextLayout(x, 160, 0.5, data[key], fontSize, "page-news-" + i, "title");
+            let text = onelinerTextLayout(730, y, 0.5, data[key], fontSize, "page-news-" + i, "title");
             container.appendChild(text);
             // the width is only known once the text is rendered, so the next
             // entry starts right after this one instead of at a fixed offset
-            x += text.getComputedTextLength() + gap;
+            y += text.getComputedTextLength() + gap;
         });
     })
     .catch((err) => console.log(err));
