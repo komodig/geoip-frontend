@@ -354,7 +354,7 @@ export function createTitle() {
             container.appendChild(text);
             // the width is only known once the text is rendered, so the next
             // entry starts right after this one instead of at a fixed offset
-            y += text.getComputedTextLength() + gap;
+            y += fontSize + gap;
         });
     })
     .catch((err) => console.log(err));
