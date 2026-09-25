@@ -344,6 +344,20 @@ export function createTitle() {
         container.appendChild(onelinerTextLayout(700, 160, 0.5, "updated: " + pretty_date, 16, "page-subtitle", "title"));
     })
     .catch((err) => console.log(err));
+
+    ipdata.hostNewsAPI(5).then(data => {
+        const fontSize = 10;
+        const gap = fontSize; // space between two entries
+        let x = 700;
+        Object.keys(data).forEach((key, i) => {
+            let text = onelinerTextLayout(x, 160, 0.5, data[key], fontSize, "page-news-" + i, "title");
+            container.appendChild(text);
+            // the width is only known once the text is rendered, so the next
+            // entry starts right after this one instead of at a fixed offset
+            x += text.getComputedTextLength() + gap;
+        });
+    })
+    .catch((err) => console.log(err));
 }
 
 const DOCKED_NAME = 'docked' // the docked-flag's name

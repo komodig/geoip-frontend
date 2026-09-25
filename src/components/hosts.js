@@ -41,5 +41,12 @@ export async function hostByAddrAPI(addr) {
     const data = await response.json();
 
     return data;
+}
 
+export async function hostNewsAPI(count) {
+    const url = url_path + "hosts/latest/" + count + "/";
+    const response = await fetch(url);
+    const data = await response.json();
+
+    return data;
 }
