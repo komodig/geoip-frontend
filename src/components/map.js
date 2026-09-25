@@ -337,24 +337,26 @@ function prettyDate(timestamp) {
 export function createTitle() {
     let container = document.getElementById(CONTAINER_ID);
     container.appendChild(onelinerTextLayout(515, 12, 0.5, 'click country to lock/unlock', 10, "page-hint", "title"));
-    container.appendChild(onelinerTextLayout(170, 100, 0.5, 'tracking brute force cyber attacks', 52, "page-title", "title"));
+    container.appendChild(onelinerTextLayout(170, 100, 0.4, 'tracking brute force cyber attacks', 52, "page-title", "title"));
 
     ipdata.timestampAPI(1).then(data => {
         let pretty_date = prettyDate(data.timestamp);
-        container.appendChild(onelinerTextLayout(700, 160, 0.5, "updated: " + pretty_date, 16, "page-subtitle", "title"));
+        container.appendChild(onelinerTextLayout(700, 160, 0.6, "updated: " + pretty_date, 16, "page-subtitle", "title"));
     })
     .catch((err) => console.log(err));
 
-    ipdata.hostNewsAPI(5).then(data => {
-        const fontSize = 10;
+    ipdata.hostNewsAPI(10).then(data => {
+        const fontSize = 12;
         const gap = fontSize; // space between two entries
         let y = 200;
+        let opacity = 0.6;
         Object.keys(data).forEach((key, i) => {
-            let text = onelinerTextLayout(730, y, 0.5, data[key], fontSize, "page-news-" + i, "title");
+            let text = onelinerTextLayout(750, y, opacity, data[key], fontSize, "page-news-" + i, "title");
             container.appendChild(text);
             // the width is only known once the text is rendered, so the next
             // entry starts right after this one instead of at a fixed offset
-            y += fontSize + gap;
+            y += fontSize;
+            opacity -= (i/10);
         });
     })
     .catch((err) => console.log(err));
