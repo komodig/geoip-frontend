@@ -79,18 +79,21 @@ polygon.move:hover {
 }
 
 /*
- * headline and "updated:" line are only in the way once a country is locked,
- * so they fade out together with the rest of the world and come back on
- * unfocus. done as a descendant rule rather than from javascript because
- * page-subtitle is appended late (it waits for timestampAPI), and a rule
- * applies to it whenever it turns up.
+ * headline, "updated:" line and host news are only in the way once a
+ * country is locked, so they fade out together with the rest of the world
+ * and come back on unfocus. done as a descendant rule rather than from
+ * javascript because page-subtitle and the news lines are appended late
+ * (they wait for their api calls), and a rule applies to them whenever they
+ * turn up.
  */
 #page-title,
-#page-subtitle {
+#page-subtitle,
+.news-line {
     transition: opacity 450ms ease-in-out;
 }
 #world-map.focus-mode #page-title,
-#world-map.focus-mode #page-subtitle {
+#world-map.focus-mode #page-subtitle,
+#world-map.focus-mode .news-line {
     opacity: 0;
 }
 
@@ -98,10 +101,11 @@ polygon.move:hover {
  * host news lines fade in one after another; the per-line delay is set
  * from javascript (animationDelay = index * step). css opacity multiplies
  * with the fill-opacity attribute, so the decreasing opacity of the list
- * is kept.
+ * is kept. fill mode is backwards, not both: a finished animation holding
+ * opacity: 1 would override the focus-mode rule above.
  */
 .news-line {
-    animation: news-fade-in 400ms ease-out both;
+    animation: news-fade-in 400ms ease-out backwards;
 }
 @keyframes news-fade-in {
     from { opacity: 0; transform: translateY(-4px); }
