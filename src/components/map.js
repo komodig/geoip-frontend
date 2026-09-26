@@ -348,7 +348,7 @@ export function createTitle() {
     let maxNews = 10;
     ipdata.hostNewsAPI(maxNews).then(data => {
         const fontSize = 12;
-        let y = 200;
+        let y = 180;
         let opacity = 0.6;
         Object.keys(data).forEach((key, i) => {
             let text = onelinerTextLayout(750, y, opacity, data[key], fontSize, "page-news-" + i, "title");
@@ -357,7 +357,7 @@ export function createTitle() {
             // entry starts right after this one instead of at a fixed offset
             y += fontSize;
             if(i >= maxNews/2) {
-                opacity -= (i/10);
+                opacity -= 0.1;
             }
         });
     })
