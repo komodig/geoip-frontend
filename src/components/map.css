@@ -93,3 +93,17 @@ polygon.move:hover {
 #world-map.focus-mode #page-subtitle {
     opacity: 0;
 }
+
+/*
+ * host news lines fade in one after another; the per-line delay is set
+ * from javascript (animationDelay = index * step). css opacity multiplies
+ * with the fill-opacity attribute, so the decreasing opacity of the list
+ * is kept.
+ */
+.news-line {
+    animation: news-fade-in 400ms ease-out both;
+}
+@keyframes news-fade-in {
+    from { opacity: 0; transform: translateY(-4px); }
+    to   { opacity: 1; transform: none; }
+}

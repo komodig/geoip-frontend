@@ -351,10 +351,11 @@ export function createTitle() {
         let y = 180;
         let opacity = 0.6;
         Object.keys(data).forEach((key, i) => {
-            let text = onelinerTextLayout(750, y, opacity, data[key], fontSize, "page-news-" + i, "title");
+            let text = onelinerTextLayout(750, y, opacity, data[key], fontSize, "page-news-" + i, "title news-line");
+            // staggered fade-in, the animation itself lives in map.css
+            text.style.animationDelay = (i * 120) + "ms";
             container.appendChild(text);
-            // the width is only known once the text is rendered, so the next
-            // entry starts right after this one instead of at a fixed offset
+            // one entry per line, stacked downwards
             y += fontSize;
             if(i >= maxNews/2) {
                 opacity -= 0.1;
