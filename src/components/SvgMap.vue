@@ -133,9 +133,9 @@ export default {
     },
     computed: {
         /*
-         * driven as a css transform rather than the transform attribute:
-         * attribute changes cannot be transitioned, a css transform on this
-         * single <g> can be, which keeps pan/zoom off the javascript thread
+         * driven as a css transform
+         * a css transform on this single <g>
+         * keeps pan/zoom off the javascript thread
          */
         mapTransform() {
             return {transform: `translate(${this.transX}px, ${this.transY}px) scale(${this.scale})`};
@@ -155,8 +155,7 @@ export default {
         },
         zoomBy(delta) {
             /*
-             * zoom around the middle of the screen instead of shifting transX
-             * by a fixed amount, so whatever the user is looking at stays put
+             * zoom around the middle of the screen, so whatever the user is looking at stays put
              */
             let next = Math.max(MIN_SCALE, this.scale + delta);
             let c = visibleCenterPoint(this.viewBoxW / 2, this.viewBoxH / 2);
