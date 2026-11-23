@@ -1,3 +1,16 @@
+circle.exit {
+    stroke: white;
+    stroke-width: 1;
+    fill: grey;
+    fill-opacity: 0.5;
+}
+path.exit {
+    stroke: white;
+    stroke-width: 1.5;
+}
+circle.exit:hover {
+    stroke: red;
+}
 circle.zoom {
     stroke: black;
     stroke-width: 1;

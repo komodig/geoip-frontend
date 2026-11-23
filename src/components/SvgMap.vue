@@ -18,7 +18,7 @@
                 v-bind="path",
                 v-on:mouseenter="show($event, path)",
                 v-on:mouseleave="reset(path)",
-                v-on:click="toggleFocused(path)",
+                v-on:click="dockCountry(path)",
             )
 
         path.zoom(d="M 100 37 l 0 6")
@@ -30,6 +30,9 @@
         polygon.move(points="80,42 60,50 80,58" v-on:click="moveRight")
         polygon.move(points="90,25 110,25 100,10" v-on:click="moveUp")
         polygon.move(points="90,75 110,75 100,90" v-on:click="moveDown")
+        path.exit(d="M 1100 34 l 0 12" transform="rotate(45 1100 40)")
+        path.exit(d="M 1094 40 l 12 0" transform="rotate(45 1100 40)")
+        circle.exit(cx="1100" cy="40" r="10" v-on:click="undockCountry")
         text(id="stat-container")
             StatDetail(
                 v-for="hs in stats",
@@ -81,6 +84,8 @@ import * as svg_data from "./world.js";
 import {classHighlight,
     classReset,
     classDockUndock,
+    hideExit,
+    unhideExit,
     focusColors,
     unfocusColors,
     countryCenter,
@@ -220,6 +225,14 @@ export default {
                 this.focusCountry(state.name);
             else
                 this.unfocusCountry(state.name);
+        },
+        dockCountry(el) {
+            this.toggleFocused(el);
+            unhideExit();
+        },
+        undockCountry() {
+            this.toggleFocused('');
+            hideExit();
         },
         hostDetailBox(tspan) {
             createRetrieveMoreDetail(document.getElementById(tspan.id).getAttribute("addr"), 12, tspan.id);

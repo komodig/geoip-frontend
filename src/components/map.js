@@ -18,6 +18,8 @@ const NMAP_TEXT = "nmap-detail-text";
 const SESSION_RGB_PREFIX = "rgb-";
 const SCAN_MIN_LENGTH = 210;
 
+const RIGHT_MENU_X = 1000;
+
 // created elements' class to be removed on reset
 const CONTEXT_CLASS = "nation-context";
 
@@ -479,7 +481,7 @@ export function classHighlight(ev, dim, name, transX, transY, fontSize) {
 
     const token = ++hoverToken;
     clearTimeout(hoverTimer);
-    hoverTimer = setTimeout(() => createRetrieveHostList(name, 1000, 10, fontSize, token), HOVER_DELAY);
+    hoverTimer = setTimeout(() => createRetrieveHostList(name, RIGHT_MENU_X, 30, fontSize, token), HOVER_DELAY);
 }
 
 export function classReset(name) {
@@ -543,6 +545,7 @@ export function initPage() {
     sessionStorage.clear();
     sessionStorage.setItem(DOCKED_NAME, NOTHING_DOCKED);
     initCountryColors();
+    hideExit();
 }
 
 export function preInitHostEntries() {
@@ -581,5 +584,19 @@ function initCountryColors() {
                 colorizeCountry(cname);
             })
         }
+    }
+}
+
+export function hideExit() {
+    let paths = document.getElementsByClassName("exit");
+    for(let x = 0; x < paths.length; x++) {
+        paths[x].style.visibility = "hidden";
+    }
+}
+
+export function unhideExit() {
+    let paths = document.getElementsByClassName("exit");
+    for(let x = 0; x < paths.length; x++) {
+        paths[x].style.visibility = "visible";
     }
 }
