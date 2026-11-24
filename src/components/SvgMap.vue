@@ -284,8 +284,10 @@ export default {
                 target = this.page + 1;
             }
             else if(dir == "in") {
-                console.log(dir);
-                return;
+                // back to the first page
+                if(this.page == 1)
+                    return;
+                target = 1;
             }
             else {
                 console.log("error: pagemove: unknown dir");
