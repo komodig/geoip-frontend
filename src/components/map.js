@@ -380,7 +380,7 @@ function prettyDate(timestamp) {
 
 export function createTitle() {
     let container = document.getElementById(CONTAINER_ID);
-    container.appendChild(onelinerTextLayout(515, 12, 0.5, 'click the map to query country', 10, "page-hint", "title"));
+    container.appendChild(onelinerTextLayout(515, 12, 0.5, 'click country on map to query detail', 10, "page-hint", "title"));
     container.appendChild(onelinerTextLayout(170, 100, 0.4, 'incoming cyber attacks detected', 52, "page-title", "title"));
 
     ipdata.timestampAPI(1).then(data => {

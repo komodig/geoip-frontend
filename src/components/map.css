@@ -10,6 +10,7 @@ path.exit {
 }
 circle.exit:hover {
     stroke: red;
+    fill: red;
 }
 circle.zoom {
     stroke: black;
