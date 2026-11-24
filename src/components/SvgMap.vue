@@ -85,6 +85,7 @@ import {classHighlight,
     classReset,
     classDockUndock,
     anythingDocked,
+    dockedCountry,
     hideExit,
     unhideExit,
     focusColors,
@@ -96,6 +97,7 @@ import {classHighlight,
     preInitStatEntries,
     preInitPaginEntries,
     createRetrieveHostDetail,
+    retrieveHostPage,
     createRetrieveMoreDetail,
     NMAP_ID,
 } from "./map.js"
@@ -135,6 +137,10 @@ export default {
             details: hostDetailAPIs,
             savedView: null,
             focusTimer: null,
+            // pagination state of the host list shown in the right menu
+            page: 1,
+            hasPrevPage: false,
+            hasNextPage: false,
         };
     },
     computed: {
@@ -214,8 +220,23 @@ export default {
                 this.savedView = null;
             }
         },
+        setPageInfo(info) {
+            this.page = info.page;
+            this.hasPrevPage = info.previous !== null;
+            this.hasNextPage = info.next !== null;
+        },
+        resetPaging() {
+            this.page = 1;
+            this.hasPrevPage = false;
+            this.hasNextPage = false;
+        },
         show(ev, el) {
-            classHighlight(ev, el.d, el.class, this.transX, this.transY, this.fontSize);
+            // the host list of a hovered country always starts at page 1;
+            // while a country is docked hovering does not change the list
+            if(!anythingDocked())
+                this.resetPaging();
+            classHighlight(ev, el.d, el.class, this.transX, this.transY, this.fontSize,
+                (info) => this.setPageInfo(info));
         },
         reset(el) {
             classReset(el.class);
@@ -236,6 +257,7 @@ export default {
         undockCountry() {
             this.toggleFocused('');
             hideExit();
+            this.resetPaging();
         },
         hostDetailBox(tspan) {
             createRetrieveMoreDetail(document.getElementById(tspan.id).getAttribute("addr"), 12, tspan.id);
@@ -250,14 +272,35 @@ export default {
             document.getElementById(tspan.id).setAttribute("text-decoration", "none");
         },
         pagemove(dir) {
-            if(dir == "left")
+            let target;
+            if(dir == "left") {
+                if(!this.hasPrevPage)
+                    return;
+                target = this.page - 1;
+            }
+            else if(dir == "right") {
+                if(!this.hasNextPage)
+                    return;
+                target = this.page + 1;
+            }
+            else if(dir == "in") {
                 console.log(dir);
-            else if(dir == "right")
-                console.log(dir);
-            else if(dir == "in")
-                console.log(dir);
-            else
-                console.log("error: pagemove: unknown dir")
+                return;
+            }
+            else {
+                console.log("error: pagemove: unknown dir");
+                return;
+            }
+
+            // the nav buttons can only be reached with a country docked,
+            // otherwise leaving the country hides the whole menu
+            if(!anythingDocked())
+                return;
+
+            retrieveHostPage(dockedCountry(), target, this.fontSize).then((info) => {
+                if(info)
+                    this.setPageInfo(info);
+            });
         }
     },
 };

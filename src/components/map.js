@@ -10,6 +10,7 @@ const CONTAINER_ID = "world-map";
 const STAT_CONTAINER = "stat-container";
 const NAV_CONTAINER = "nav-container";
 const HOST_CONTAINER = "host-container";
+const HOSTS_BOX = "nation-hosts-box";
 const DETAIL_CONTAINER = "detail-container";
 const DETAIL_BOX = "host-detail-box";
 const DETAIL_TEXT = "host-detail-text";
@@ -19,6 +20,7 @@ const SESSION_RGB_PREFIX = "rgb-";
 const SCAN_MIN_LENGTH = 210;
 
 const RIGHT_MENU_X = 1000;
+const RIGHT_MENU_Y = 30;
 
 // created elements' class to be removed on reset
 const CONTEXT_CLASS = "nation-context";
@@ -47,6 +49,10 @@ const HOVER_DELAY = 120;
  */
 let hoverToken = 0;
 let hoverTimer = null;
+
+// bumped by every page request, so that only the last clicked page is shown
+// when several page requests are in flight
+let pageToken = 0;
 
 
 function boxLayout(x, y, name, boxid, width, height, fontSize) {
@@ -196,17 +202,24 @@ function createNameBox(name, x, y, fontSize) {
     return container;
 }
 
-function createRetrieveHostList(name, x, y, fontSize, token) {
+function hostsBoxHeight(ipArr, fontSize) {
+    return (ipArr.length+10)*fontSize;
+}
+
+function createRetrieveHostList(name, x, y, fontSize, token, onPage) {
     /*
      * creates animated boxes for country info and retrieves host list and statistics to be assigned
-     * to vue data() in global element tables
+     * to vue data() in global element tables. onPage (optional) receives the pagination info of
+     * the first page, see hostsByCountryAPI()
      */
     ipdata.hostsByCountryAPI(name).then((ip_dict) => {
         if(token !== hoverToken)
             return;
+        if(onPage)
+            onPage(ip_dict);
         let ipArr = ip_dict['ipArr'];
         if(ipArr.length > 0) {
-            let container = createAnimatedBox(x, y+fontSize*2, name, "nation-hosts-box", 90, (ipArr.length+10)*fontSize, fontSize);
+            let container = createAnimatedBox(x, y+fontSize*2, name, HOSTS_BOX, 90, hostsBoxHeight(ipArr, fontSize), fontSize);
             retrieveStatInfo(name).then((statArr) => {
                 if(token !== hoverToken)
                     return;
@@ -217,6 +230,35 @@ function createRetrieveHostList(name, x, y, fontSize, token) {
         }
     })
     .catch((err) => console.log(err));
+}
+
+export function retrieveHostPage(name, page, fontSize) {
+    /*
+     * re-fills the already visible host list with another page of the
+     * hosts-by-country api. resolves to the pagination info (see
+     * hostsByCountryAPI()), or null if the request failed or its result
+     * became stale (country left, or a newer page requested meanwhile)
+     */
+    const token = hoverToken;
+    const req = ++pageToken;
+
+    return ipdata.hostsByCountryAPI(name, page).then((ip_dict) => {
+        if(token !== hoverToken || req !== pageToken)
+            return null;
+        let ipArr = ip_dict['ipArr'];
+        let box = document.getElementById(HOSTS_BOX);
+        if(box) {
+            let height = hostsBoxHeight(ipArr, fontSize);
+            box.setAttribute("finalHeight", height);
+            box.setAttribute("height", height);
+        }
+        useTextLayout(RIGHT_MENU_X, RIGHT_MENU_Y + fontSize*6, ipArr, fontSize-2, HOST_CONTAINER);
+        return ip_dict;
+    })
+    .catch((err) => {
+        console.log(err);
+        return null;
+    });
 }
 
 async function retrieveStatInfo(name, ip_dict) {
@@ -451,6 +493,10 @@ export function visibleCenterPoint(fallbackX, fallbackY) {
     return {"x": p.x, "y": p.y};
 }
 
+export function dockedCountry() {
+    return sessionStorage.getItem(DOCKED_NAME);
+}
+
 export function anythingDocked() {
     if(sessionStorage.getItem(DOCKED_NAME) == NOTHING_DOCKED)
         return false;
@@ -458,7 +504,7 @@ export function anythingDocked() {
         return true;
 }
 
-export function classHighlight(ev, dim, name, transX, transY, fontSize) {
+export function classHighlight(ev, dim, name, transX, transY, fontSize, onPage) {
     let country = document.getElementsByClassName(name);
 
     if(anythingDocked())
@@ -481,7 +527,7 @@ export function classHighlight(ev, dim, name, transX, transY, fontSize) {
 
     const token = ++hoverToken;
     clearTimeout(hoverTimer);
-    hoverTimer = setTimeout(() => createRetrieveHostList(name, RIGHT_MENU_X, 30, fontSize, token), HOVER_DELAY);
+    hoverTimer = setTimeout(() => createRetrieveHostList(name, RIGHT_MENU_X, RIGHT_MENU_Y, fontSize, token, onPage), HOVER_DELAY);
 }
 
 export function classReset(name) {
