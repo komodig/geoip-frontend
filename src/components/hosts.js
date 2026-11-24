@@ -6,7 +6,7 @@ export async function hostsByCountryAPI(country) {
     const url = url_path + "hosts/" + country + "/?page=1";
     const response = await fetch(url);
     let data = await response.json();
-    let ip_list = data;
+    let ip_list = data.results;   // paginated response: {count, next, previous, results}
     let ipArr = [];
     ip_list.forEach(obj => {
         Object.entries(obj).forEach(([key, value]) => {
