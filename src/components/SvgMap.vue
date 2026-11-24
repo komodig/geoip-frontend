@@ -84,6 +84,7 @@ import * as svg_data from "./world.js";
 import {classHighlight,
     classReset,
     classDockUndock,
+    anythingDocked,
     hideExit,
     unhideExit,
     focusColors,
@@ -227,8 +228,10 @@ export default {
                 this.unfocusCountry(state.name);
         },
         dockCountry(el) {
-            this.toggleFocused(el);
-            unhideExit();
+            if(!anythingDocked()) {
+                this.toggleFocused(el);
+                unhideExit();
+            }
         },
         undockCountry() {
             this.toggleFocused('');

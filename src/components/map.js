@@ -338,8 +338,8 @@ function prettyDate(timestamp) {
 
 export function createTitle() {
     let container = document.getElementById(CONTAINER_ID);
-    container.appendChild(onelinerTextLayout(515, 12, 0.5, 'click country to lock/unlock', 10, "page-hint", "title"));
-    container.appendChild(onelinerTextLayout(170, 100, 0.4, 'tracking brute force cyber attacks', 52, "page-title", "title"));
+    container.appendChild(onelinerTextLayout(515, 12, 0.5, 'click the map to query country', 10, "page-hint", "title"));
+    container.appendChild(onelinerTextLayout(170, 100, 0.4, 'incoming cyber attacks detected', 52, "page-title", "title"));
 
     ipdata.timestampAPI(1).then(data => {
         let pretty_date = prettyDate(data.timestamp);
@@ -451,7 +451,7 @@ export function visibleCenterPoint(fallbackX, fallbackY) {
     return {"x": p.x, "y": p.y};
 }
 
-function anythingDocked() {
+export function anythingDocked() {
     if(sessionStorage.getItem(DOCKED_NAME) == NOTHING_DOCKED)
         return false;
     else
